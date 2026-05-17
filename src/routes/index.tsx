@@ -71,7 +71,7 @@ function Home() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/contact"
+                to="/book"
                 className="inline-flex items-center gap-2 bg-amber-gradient text-primary-foreground font-display uppercase tracking-wider font-semibold px-6 py-3.5 rounded-md shadow-glow-amber hover:brightness-110 transition"
               >
                 Book Service <ArrowRight className="h-4 w-4" />
@@ -114,16 +114,19 @@ function Home() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {services.map((s) => (
-            <div
+            <Link
               key={s.name}
-              className="group p-6 rounded-lg bg-surface border border-border hover:border-primary/50 hover:bg-surface-elevated transition"
+              to="/book"
+              search={{ service: s.name }}
+              className="group p-6 rounded-lg bg-surface border border-border hover:border-primary/50 hover:bg-surface-elevated transition block"
             >
               <div className="h-12 w-12 rounded-md bg-primary/15 text-primary flex items-center justify-center mb-5 group-hover:bg-amber-gradient group-hover:text-primary-foreground transition">
                 <s.icon className="h-6 w-6" />
               </div>
               <h3 className="font-display uppercase tracking-wide text-xl mb-2">{s.name}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-            </div>
+              <p className="mt-4 text-xs text-primary inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">Book this service <ArrowRight className="h-3 w-3" /></p>
+            </Link>
           ))}
         </div>
       </section>

@@ -14,12 +14,21 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CarsForSaleRouteImport } from './routes/cars-for-sale'
+import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StatusTokenRouteImport } from './routes/status.$token'
 import { Route as PayTokenRouteImport } from './routes/pay.$token'
 import { Route as CarsForSaleIdRouteImport } from './routes/cars-for-sale.$id'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
+import { Route as AdminAdminWorkOrdersRouteImport } from './routes/_admin/admin.work-orders'
+import { Route as AdminAdminReportsRouteImport } from './routes/_admin/admin.reports'
+import { Route as AdminAdminMessagesRouteImport } from './routes/_admin/admin.messages'
+import { Route as AdminAdminInvoicesRouteImport } from './routes/_admin/admin.invoices'
+import { Route as AdminAdminCarsRouteImport } from './routes/_admin/admin.cars'
+import { Route as AdminAdminBookingsRouteImport } from './routes/_admin/admin.bookings'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -46,8 +55,17 @@ const CarsForSaleRoute = CarsForSaleRouteImport.update({
   path: '/cars-for-sale',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/_admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -75,88 +93,175 @@ const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AdminAdminRoute = AdminAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminWorkOrdersRoute = AdminAdminWorkOrdersRouteImport.update({
+  id: '/work-orders',
+  path: '/work-orders',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminReportsRoute = AdminAdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminMessagesRoute = AdminAdminMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminInvoicesRoute = AdminAdminInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminCarsRoute = AdminAdminCarsRouteImport.update({
+  id: '/cars',
+  path: '/cars',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
+const AdminAdminBookingsRoute = AdminAdminBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
   '/signup': typeof SignupRoute
+  '/admin': typeof AdminAdminRouteWithChildren
   '/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
   '/pay/$token': typeof PayTokenRoute
   '/status/$token': typeof StatusTokenRoute
+  '/admin/bookings': typeof AdminAdminBookingsRoute
+  '/admin/cars': typeof AdminAdminCarsRoute
+  '/admin/invoices': typeof AdminAdminInvoicesRoute
+  '/admin/messages': typeof AdminAdminMessagesRoute
+  '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
   '/signup': typeof SignupRoute
+  '/admin': typeof AdminAdminRouteWithChildren
   '/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
   '/pay/$token': typeof PayTokenRoute
   '/status/$token': typeof StatusTokenRoute
+  '/admin/bookings': typeof AdminAdminBookingsRoute
+  '/admin/cars': typeof AdminAdminCarsRoute
+  '/admin/invoices': typeof AdminAdminInvoicesRoute
+  '/admin/messages': typeof AdminAdminMessagesRoute
+  '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_admin': typeof AdminRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
   '/signup': typeof SignupRoute
+  '/_admin/admin': typeof AdminAdminRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
   '/pay/$token': typeof PayTokenRoute
   '/status/$token': typeof StatusTokenRoute
+  '/_admin/admin/bookings': typeof AdminAdminBookingsRoute
+  '/_admin/admin/cars': typeof AdminAdminCarsRoute
+  '/_admin/admin/invoices': typeof AdminAdminInvoicesRoute
+  '/_admin/admin/messages': typeof AdminAdminMessagesRoute
+  '/_admin/admin/reports': typeof AdminAdminReportsRoute
+  '/_admin/admin/work-orders': typeof AdminAdminWorkOrdersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/book'
     | '/cars-for-sale'
     | '/contact'
     | '/login'
     | '/services'
     | '/signup'
+    | '/admin'
     | '/portal'
     | '/cars-for-sale/$id'
     | '/pay/$token'
     | '/status/$token'
+    | '/admin/bookings'
+    | '/admin/cars'
+    | '/admin/invoices'
+    | '/admin/messages'
+    | '/admin/reports'
+    | '/admin/work-orders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/book'
     | '/cars-for-sale'
     | '/contact'
     | '/login'
     | '/services'
     | '/signup'
+    | '/admin'
     | '/portal'
     | '/cars-for-sale/$id'
     | '/pay/$token'
     | '/status/$token'
+    | '/admin/bookings'
+    | '/admin/cars'
+    | '/admin/invoices'
+    | '/admin/messages'
+    | '/admin/reports'
+    | '/admin/work-orders'
   id:
     | '__root__'
     | '/'
+    | '/_admin'
     | '/_authenticated'
+    | '/book'
     | '/cars-for-sale'
     | '/contact'
     | '/login'
     | '/services'
     | '/signup'
+    | '/_admin/admin'
     | '/_authenticated/portal'
     | '/cars-for-sale/$id'
     | '/pay/$token'
     | '/status/$token'
+    | '/_admin/admin/bookings'
+    | '/_admin/admin/cars'
+    | '/_admin/admin/invoices'
+    | '/_admin/admin/messages'
+    | '/_admin/admin/reports'
+    | '/_admin/admin/work-orders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  BookRoute: typeof BookRoute
   CarsForSaleRoute: typeof CarsForSaleRouteWithChildren
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
@@ -203,11 +308,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CarsForSaleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -245,8 +364,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_admin/admin': {
+      id: '/_admin/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminAdminRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/work-orders': {
+      id: '/_admin/admin/work-orders'
+      path: '/work-orders'
+      fullPath: '/admin/work-orders'
+      preLoaderRoute: typeof AdminAdminWorkOrdersRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/_admin/admin/reports': {
+      id: '/_admin/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminAdminReportsRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/_admin/admin/messages': {
+      id: '/_admin/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AdminAdminMessagesRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/_admin/admin/invoices': {
+      id: '/_admin/admin/invoices'
+      path: '/invoices'
+      fullPath: '/admin/invoices'
+      preLoaderRoute: typeof AdminAdminInvoicesRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/_admin/admin/cars': {
+      id: '/_admin/admin/cars'
+      path: '/cars'
+      fullPath: '/admin/cars'
+      preLoaderRoute: typeof AdminAdminCarsRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
+    '/_admin/admin/bookings': {
+      id: '/_admin/admin/bookings'
+      path: '/bookings'
+      fullPath: '/admin/bookings'
+      preLoaderRoute: typeof AdminAdminBookingsRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
   }
 }
+
+interface AdminAdminRouteChildren {
+  AdminAdminBookingsRoute: typeof AdminAdminBookingsRoute
+  AdminAdminCarsRoute: typeof AdminAdminCarsRoute
+  AdminAdminInvoicesRoute: typeof AdminAdminInvoicesRoute
+  AdminAdminMessagesRoute: typeof AdminAdminMessagesRoute
+  AdminAdminReportsRoute: typeof AdminAdminReportsRoute
+  AdminAdminWorkOrdersRoute: typeof AdminAdminWorkOrdersRoute
+}
+
+const AdminAdminRouteChildren: AdminAdminRouteChildren = {
+  AdminAdminBookingsRoute: AdminAdminBookingsRoute,
+  AdminAdminCarsRoute: AdminAdminCarsRoute,
+  AdminAdminInvoicesRoute: AdminAdminInvoicesRoute,
+  AdminAdminMessagesRoute: AdminAdminMessagesRoute,
+  AdminAdminReportsRoute: AdminAdminReportsRoute,
+  AdminAdminWorkOrdersRoute: AdminAdminWorkOrdersRoute,
+}
+
+const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
+  AdminAdminRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminAdminRoute: typeof AdminAdminRouteWithChildren
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminRoute: AdminAdminRouteWithChildren,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AuthenticatedRouteChildren {
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
@@ -274,7 +474,9 @@ const CarsForSaleRouteWithChildren = CarsForSaleRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  BookRoute: BookRoute,
   CarsForSaleRoute: CarsForSaleRouteWithChildren,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,

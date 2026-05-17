@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, MessageSquare, User, X, LogOut } from "lucide-react";
+import { Menu, Settings, MessageSquare, User, X, LogOut, ShieldCheck } from "lucide-react";
 import { Logo } from "./Logo";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
@@ -9,17 +9,24 @@ const navLinks = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Services" },
   { to: "/cars-for-sale", label: "Cars for Sale" },
+  { to: "/book", label: "Book" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
 export function Header() {
   const [session, setSession] = useState<Session | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const checkAdmin = async (s: Session | null) => {
+      if (!s) { setIsAdmin(false); return; }
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", s.user.id);
+      setIsAdmin(!!data?.some((r) => r.role === "admin"));
+    };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => { setSession(s); checkAdmin(s); });
+    supabase.auth.getSession().then(({ data }) => { setSession(data.session); checkAdmin(data.session); });
     return () => subscription.unsubscribe();
   }, []);
 
@@ -64,6 +71,14 @@ export function Header() {
           </button>
           {session ? (
             <>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-display uppercase tracking-wider bg-primary/15 text-primary border border-primary/40 hover:bg-primary/25 transition"
+                >
+                  <ShieldCheck className="h-4 w-4" /> Admin
+                </Link>
+              )}
               <Link
                 to="/portal"
                 className="p-2 text-muted-foreground hover:text-foreground transition"
@@ -125,6 +140,11 @@ export function Header() {
             </Link>
             {session ? (
               <>
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm font-display uppercase tracking-wider text-primary">
+                    Admin Dashboard
+                  </Link>
+                )}
                 <Link to="/portal" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
                   My Portal
                 </Link>
