@@ -71,6 +71,14 @@ export function Header() {
           </button>
           {session ? (
             <>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-display uppercase tracking-wider bg-primary/15 text-primary border border-primary/40 hover:bg-primary/25 transition"
+                >
+                  <ShieldCheck className="h-4 w-4" /> Admin
+                </Link>
+              )}
               <Link
                 to="/portal"
                 className="p-2 text-muted-foreground hover:text-foreground transition"
