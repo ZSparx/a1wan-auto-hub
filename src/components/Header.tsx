@@ -140,6 +140,11 @@ export function Header() {
             </Link>
             {session ? (
               <>
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm font-display uppercase tracking-wider text-primary">
+                    Admin Dashboard
+                  </Link>
+                )}
                 <Link to="/portal" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
                   My Portal
                 </Link>
