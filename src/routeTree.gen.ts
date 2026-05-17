@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CarsForSaleRouteImport } from './routes/cars-for-sale'
 import { Route as BookRouteImport } from './routes/book'
+import { Route as AdminSetupRouteImport } from './routes/admin-setup'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -58,6 +59,11 @@ const CarsForSaleRoute = CarsForSaleRouteImport.update({
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSetupRoute = AdminSetupRouteImport.update({
+  id: '/admin-setup',
+  path: '/admin-setup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -131,6 +137,7 @@ const AdminAdminBookingsRoute = AdminAdminBookingsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin-setup': typeof AdminSetupRoute
   '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin-setup': typeof AdminSetupRoute
   '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_admin': typeof AdminRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/admin-setup': typeof AdminSetupRoute
   '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin-setup'
     | '/book'
     | '/cars-for-sale'
     | '/contact'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin-setup'
     | '/book'
     | '/cars-for-sale'
     | '/contact'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_admin'
     | '/_authenticated'
+    | '/admin-setup'
     | '/book'
     | '/cars-for-sale'
     | '/contact'
@@ -261,6 +273,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AdminSetupRoute: typeof AdminSetupRoute
   BookRoute: typeof BookRoute
   CarsForSaleRoute: typeof CarsForSaleRouteWithChildren
   ContactRoute: typeof ContactRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/book'
       fullPath: '/book'
       preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-setup': {
+      id: '/admin-setup'
+      path: '/admin-setup'
+      fullPath: '/admin-setup'
+      preLoaderRoute: typeof AdminSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -476,6 +496,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AdminSetupRoute: AdminSetupRoute,
   BookRoute: BookRoute,
   CarsForSaleRoute: CarsForSaleRouteWithChildren,
   ContactRoute: ContactRoute,
