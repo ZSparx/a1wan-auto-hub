@@ -23,7 +23,7 @@ function CarsAdmin() {
 
   const update = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Record<string, unknown> }) => {
-      const { error } = await supabase.from("cars_for_sale").update(patch).eq("id", id);
+      const { error } = await supabase.from("cars_for_sale").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-cars"] }); toast.success("Updated"); },

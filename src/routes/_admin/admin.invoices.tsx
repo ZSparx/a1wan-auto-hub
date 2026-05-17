@@ -23,7 +23,7 @@ function InvoicesAdmin() {
 
   const update = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: { status?: string } }) => {
-      const { error } = await supabase.from("invoices").update(patch).eq("id", id);
+      const { error } = await supabase.from("invoices").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-invoices"] }); toast.success("Updated"); },
