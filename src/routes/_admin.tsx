@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_admin")({
   component: AdminLayout,
 });
 
-const links = [
+const links: { to: string; label: string; icon: React.ElementType; exact?: boolean }[] = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarClock },
   { to: "/admin/work-orders", label: "Work Orders", icon: Wrench },
@@ -29,7 +29,7 @@ const links = [
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/cars", label: "Cars", icon: Car },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
-] as const;
+];
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
