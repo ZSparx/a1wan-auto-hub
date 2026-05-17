@@ -1,0 +1,145 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Menu, Settings, MessageSquare, User, X, LogOut } from "lucide-react";
+import { Logo } from "./Logo";
+import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
+
+const navLinks = [
+  { to: "/", label: "Home" },
+  { to: "/services", label: "Services" },
+  { to: "/cars-for-sale", label: "Cars for Sale" },
+  { to: "/contact", label: "Contact" },
+] as const;
+
+export function Header() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  };
+
+  return (
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-background/85 border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <Logo />
+
+        <nav className="hidden lg:flex items-center gap-1">
+          {navLinks.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="px-3 py-2 text-sm font-medium tracking-wide uppercase text-muted-foreground hover:text-foreground transition-colors"
+              activeProps={{ className: "px-3 py-2 text-sm font-medium tracking-wide uppercase text-primary" }}
+              activeOptions={{ exact: l.to === "/" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden lg:flex items-center gap-2">
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 bg-amber-gradient text-primary-foreground font-display font-semibold tracking-wide uppercase text-sm px-4 py-2 rounded-md shadow-glow-amber hover:brightness-110 transition"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Message Now
+          </Link>
+          <button
+            type="button"
+            className="p-2 text-muted-foreground hover:text-foreground transition"
+            aria-label="Settings"
+          >
+            <Settings className="h-5 w-5" />
+          </button>
+          {session ? (
+            <>
+              <Link
+                to="/portal"
+                className="p-2 text-muted-foreground hover:text-foreground transition"
+                aria-label="Customer portal"
+              >
+                <User className="h-5 w-5" />
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="p-2 text-muted-foreground hover:text-foreground transition"
+                aria-label="Sign out"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
+            >
+              <User className="h-4 w-4" />
+              Sign In
+            </Link>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="lg:hidden p-2 text-foreground"
+          onClick={() => setMobileOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="lg:hidden border-t border-border bg-surface">
+          <div className="px-4 py-4 flex flex-col gap-1">
+            {navLinks.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                onClick={() => setMobileOpen(false)}
+                className="px-3 py-3 rounded-md text-base font-medium tracking-wide uppercase text-muted-foreground hover:text-foreground hover:bg-secondary"
+                activeProps={{ className: "px-3 py-3 rounded-md text-base font-medium tracking-wide uppercase text-primary bg-secondary" }}
+                activeOptions={{ exact: l.to === "/" }}
+              >
+                {l.label}
+              </Link>
+            ))}
+            <Link
+              to="/contact"
+              onClick={() => setMobileOpen(false)}
+              className="mt-2 inline-flex items-center justify-center gap-2 bg-amber-gradient text-primary-foreground font-display font-semibold tracking-wide uppercase text-sm px-4 py-3 rounded-md shadow-glow-amber"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Message Now
+            </Link>
+            {session ? (
+              <>
+                <Link to="/portal" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
+                  My Portal
+                </Link>
+                <button onClick={handleSignOut} className="px-3 py-3 text-left text-sm text-muted-foreground hover:text-foreground">
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link to="/login" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
+                Customer Sign In
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}

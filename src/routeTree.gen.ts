@@ -9,38 +9,207 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CarsForSaleRouteImport } from './routes/cars-for-sale'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StatusTokenRouteImport } from './routes/status.$token'
+import { Route as PayTokenRouteImport } from './routes/pay.$token'
+import { Route as CarsForSaleIdRouteImport } from './routes/cars-for-sale.$id'
+import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsForSaleRoute = CarsForSaleRouteImport.update({
+  id: '/cars-for-sale',
+  path: '/cars-for-sale',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatusTokenRoute = StatusTokenRouteImport.update({
+  id: '/status/$token',
+  path: '/status/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayTokenRoute = PayTokenRouteImport.update({
+  id: '/pay/$token',
+  path: '/pay/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsForSaleIdRoute = CarsForSaleIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CarsForSaleRoute,
+} as any)
+const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cars-for-sale': typeof CarsForSaleRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/services': typeof ServicesRoute
+  '/signup': typeof SignupRoute
+  '/portal': typeof AuthenticatedPortalRoute
+  '/cars-for-sale/$id': typeof CarsForSaleIdRoute
+  '/pay/$token': typeof PayTokenRoute
+  '/status/$token': typeof StatusTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cars-for-sale': typeof CarsForSaleRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/services': typeof ServicesRoute
+  '/signup': typeof SignupRoute
+  '/portal': typeof AuthenticatedPortalRoute
+  '/cars-for-sale/$id': typeof CarsForSaleIdRoute
+  '/pay/$token': typeof PayTokenRoute
+  '/status/$token': typeof StatusTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/cars-for-sale': typeof CarsForSaleRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/login': typeof LoginRoute
+  '/services': typeof ServicesRoute
+  '/signup': typeof SignupRoute
+  '/_authenticated/portal': typeof AuthenticatedPortalRoute
+  '/cars-for-sale/$id': typeof CarsForSaleIdRoute
+  '/pay/$token': typeof PayTokenRoute
+  '/status/$token': typeof StatusTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/cars-for-sale'
+    | '/contact'
+    | '/login'
+    | '/services'
+    | '/signup'
+    | '/portal'
+    | '/cars-for-sale/$id'
+    | '/pay/$token'
+    | '/status/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/cars-for-sale'
+    | '/contact'
+    | '/login'
+    | '/services'
+    | '/signup'
+    | '/portal'
+    | '/cars-for-sale/$id'
+    | '/pay/$token'
+    | '/status/$token'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/cars-for-sale'
+    | '/contact'
+    | '/login'
+    | '/services'
+    | '/signup'
+    | '/_authenticated/portal'
+    | '/cars-for-sale/$id'
+    | '/pay/$token'
+    | '/status/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  CarsForSaleRoute: typeof CarsForSaleRouteWithChildren
+  ContactRoute: typeof ContactRoute
+  LoginRoute: typeof LoginRoute
+  ServicesRoute: typeof ServicesRoute
+  SignupRoute: typeof SignupRoute
+  PayTokenRoute: typeof PayTokenRoute
+  StatusTokenRoute: typeof StatusTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars-for-sale': {
+      id: '/cars-for-sale'
+      path: '/cars-for-sale'
+      fullPath: '/cars-for-sale'
+      preLoaderRoute: typeof CarsForSaleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +217,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/status/$token': {
+      id: '/status/$token'
+      path: '/status/$token'
+      fullPath: '/status/$token'
+      preLoaderRoute: typeof StatusTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pay/$token': {
+      id: '/pay/$token'
+      path: '/pay/$token'
+      fullPath: '/pay/$token'
+      preLoaderRoute: typeof PayTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars-for-sale/$id': {
+      id: '/cars-for-sale/$id'
+      path: '/$id'
+      fullPath: '/cars-for-sale/$id'
+      preLoaderRoute: typeof CarsForSaleIdRouteImport
+      parentRoute: typeof CarsForSaleRoute
+    }
+    '/_authenticated/portal': {
+      id: '/_authenticated/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof AuthenticatedPortalRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedPortalRoute: AuthenticatedPortalRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+interface CarsForSaleRouteChildren {
+  CarsForSaleIdRoute: typeof CarsForSaleIdRoute
+}
+
+const CarsForSaleRouteChildren: CarsForSaleRouteChildren = {
+  CarsForSaleIdRoute: CarsForSaleIdRoute,
+}
+
+const CarsForSaleRouteWithChildren = CarsForSaleRoute._addFileChildren(
+  CarsForSaleRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  CarsForSaleRoute: CarsForSaleRouteWithChildren,
+  ContactRoute: ContactRoute,
+  LoginRoute: LoginRoute,
+  ServicesRoute: ServicesRoute,
+  SignupRoute: SignupRoute,
+  PayTokenRoute: PayTokenRoute,
+  StatusTokenRoute: StatusTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
