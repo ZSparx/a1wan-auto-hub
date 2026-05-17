@@ -38,13 +38,14 @@ function ServicesPage() {
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {services.map((s) => (
-            <div key={s.name} className="group p-7 rounded-lg bg-surface border border-border hover:border-primary/50 hover:bg-surface-elevated transition">
+            <Link key={s.name} to="/book" search={{ service: s.name }} className="group p-7 rounded-lg bg-surface border border-border hover:border-primary/50 hover:bg-surface-elevated transition block">
               <div className="h-14 w-14 rounded-md bg-primary/15 text-primary flex items-center justify-center mb-5 group-hover:bg-amber-gradient group-hover:text-primary-foreground transition">
                 <s.icon className="h-7 w-7" />
               </div>
               <h3 className="font-display uppercase tracking-wide text-2xl mb-3">{s.name}</h3>
               <p className="text-muted-foreground leading-relaxed">{s.desc}</p>
-            </div>
+              <p className="mt-5 text-sm text-primary inline-flex items-center gap-1">Book this service <ArrowRight className="h-4 w-4" /></p>
+            </Link>
           ))}
         </div>
 
