@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_id: string | null
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          notes: string | null
+          preferred_date: string | null
+          scheduled_at: string | null
+          service: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string
+          vehicle_description: string | null
+          work_order_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          customer_id?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          preferred_date?: string | null
+          scheduled_at?: string | null
+          service: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+          vehicle_description?: string | null
+          work_order_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_id?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          preferred_date?: string | null
+          scheduled_at?: string | null
+          service?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+          vehicle_description?: string | null
+          work_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cars_for_sale: {
         Row: {
           created_at: string
@@ -335,6 +394,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "customer"
+      booking_status:
+        | "requested"
+        | "scheduled"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
       car_status: "available" | "pending" | "sold"
       invoice_status: "draft" | "sent" | "paid" | "void"
       work_order_status: "intake" | "in_progress" | "ready" | "completed"
@@ -466,6 +531,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "customer"],
+      booking_status: [
+        "requested",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
       car_status: ["available", "pending", "sold"],
       invoice_status: ["draft", "sent", "paid", "void"],
       work_order_status: ["intake", "in_progress", "ready", "completed"],
