@@ -14,16 +14,330 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cars_for_sale: {
+        Row: {
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          image_url: string | null
+          make: string
+          mileage: number | null
+          model: string
+          price_cents: number
+          status: Database["public"]["Enums"]["car_status"]
+          trim: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          make: string
+          mileage?: number | null
+          model: string
+          price_cents: number
+          status?: Database["public"]["Enums"]["car_status"]
+          trim?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          make?: string
+          mileage?: number | null
+          model?: string
+          price_cents?: number
+          status?: Database["public"]["Enums"]["car_status"]
+          trim?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          read: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          read?: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          read?: boolean
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          unit_price_cents: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          unit_price_cents?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          customer_email: string | null
+          customer_id: string | null
+          customer_name: string
+          due_date: string | null
+          id: string
+          paid_at: string | null
+          public_token: string
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents: number
+          tax_cents: number
+          total_cents: number
+          updated_at: string
+          work_order_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_name: string
+          due_date?: string | null
+          id?: string
+          paid_at?: string | null
+          public_token?: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          updated_at?: string
+          work_order_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string | null
+          customer_id?: string | null
+          customer_name?: string
+          due_date?: string | null
+          id?: string
+          paid_at?: string | null
+          public_token?: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          updated_at?: string
+          work_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          make: string | null
+          model: string | null
+          owner_id: string
+          plate: string | null
+          vin: string | null
+          year: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          make?: string | null
+          model?: string | null
+          owner_id: string
+          plate?: string | null
+          vin?: string | null
+          year?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          make?: string | null
+          model?: string | null
+          owner_id?: string
+          plate?: string | null
+          vin?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      work_orders: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          customer_name: string
+          customer_phone: string | null
+          description: string
+          id: string
+          notes: string | null
+          public_token: string
+          status: Database["public"]["Enums"]["work_order_status"]
+          updated_at: string
+          vehicle_description: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          description: string
+          id?: string
+          notes?: string | null
+          public_token?: string
+          status?: Database["public"]["Enums"]["work_order_status"]
+          updated_at?: string
+          vehicle_description: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          description?: string
+          id?: string
+          notes?: string | null
+          public_token?: string
+          status?: Database["public"]["Enums"]["work_order_status"]
+          updated_at?: string
+          vehicle_description?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_orders_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "customer"
+      car_status: "available" | "pending" | "sold"
+      invoice_status: "draft" | "sent" | "paid" | "void"
+      work_order_status: "intake" | "in_progress" | "ready" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +464,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "customer"],
+      car_status: ["available", "pending", "sold"],
+      invoice_status: ["draft", "sent", "paid", "void"],
+      work_order_status: ["intake", "in_progress", "ready", "completed"],
+    },
   },
 } as const
