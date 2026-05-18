@@ -20,6 +20,7 @@ function LoginPage() {
   const { redirect } = Route.useSearch();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -54,8 +55,14 @@ function LoginPage() {
             </div>
             <div>
               <label className="block text-xs font-display uppercase tracking-wider text-muted-foreground mb-2">Password</label>
-              <input type="password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full rounded-md bg-background border border-border px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30" />
+              <div className="relative">
+                <input type={showPassword ? "text" : "password"} required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  className="w-full rounded-md bg-background border border-border px-4 py-3 pr-20 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30" />
+                <button type="button" onClick={() => setShowPassword((v) => !v)}
+                  className="absolute inset-y-0 right-0 px-3 text-xs font-display uppercase tracking-wider text-primary hover:text-primary/80">
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
             <button disabled={loading} className="w-full bg-amber-gradient text-primary-foreground font-display uppercase tracking-wider font-semibold px-6 py-3.5 rounded-md shadow-glow-amber disabled:opacity-60">
               {loading ? "Signing in…" : "Sign In"}
