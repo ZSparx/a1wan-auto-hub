@@ -10,9 +10,24 @@ export const Route = createFileRoute("/_authenticated/portal")({
 });
 
 function Portal() {
+  const [displayName, setDisplayName] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserEmail(data.user?.email ?? ""));
+    supabase.auth.getUser().then(async ({ data }) => {
+      const user = data.user;
+      if (!user) return;
+      setUserEmail(user.email ?? "");
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      setDisplayName(
+        profile?.full_name?.trim() ||
+          (user.user_metadata?.full_name as string | undefined)?.trim() ||
+          (user.email ? user.email.split("@")[0] : "")
+      );
+    });
   }, []);
 
   const { data: vehicles } = useQuery({
@@ -36,7 +51,8 @@ function Portal() {
       <header className="mb-10">
         <p className="text-primary font-display tracking-widest uppercase text-sm mb-2">Your account</p>
         <h1 className="font-display font-bold uppercase text-4xl sm:text-5xl tracking-tight">Customer Portal</h1>
-        {userEmail && <p className="mt-2 text-muted-foreground">{userEmail}</p>}
+        {displayName && <p className="mt-2 text-xl font-display tracking-wide">{displayName}</p>}
+        {userEmail && <p className="mt-1 text-sm text-muted-foreground">{userEmail}</p>}
       </header>
 
       <div className="grid md:grid-cols-3 gap-5 mb-10">
