@@ -18,6 +18,7 @@ function SignupPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ full_name: "", phone: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/portal" }); });
@@ -55,14 +56,26 @@ function SignupPage() {
               { k: "phone", label: "Phone (optional)", type: "tel" },
               { k: "email", label: "Email", type: "email" },
               { k: "password", label: "Password", type: "password" },
-            ].map((f) => (
-              <div key={f.k}>
-                <label className="block text-xs font-display uppercase tracking-wider text-muted-foreground mb-2">{f.label}</label>
-                <input type={f.type} required={f.k !== "phone"} value={(form as Record<string, string>)[f.k]}
-                  onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
-                  className="w-full rounded-md bg-background border border-border px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30" />
-              </div>
-            ))}
+            ].map((f) => {
+              const isPassword = f.k === "password";
+              const inputType = isPassword ? (showPassword ? "text" : "password") : f.type;
+              return (
+                <div key={f.k}>
+                  <label className="block text-xs font-display uppercase tracking-wider text-muted-foreground mb-2">{f.label}</label>
+                  <div className="relative">
+                    <input type={inputType} required={f.k !== "phone"} value={(form as Record<string, string>)[f.k]}
+                      onChange={(e) => setForm({ ...form, [f.k]: e.target.value })}
+                      className={`w-full rounded-md bg-background border border-border px-4 py-3 ${isPassword ? "pr-20" : ""} focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30`} />
+                    {isPassword && (
+                      <button type="button" onClick={() => setShowPassword((v) => !v)}
+                        className="absolute inset-y-0 right-0 px-3 text-xs font-display uppercase tracking-wider text-primary hover:text-primary/80">
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
             <button disabled={loading} className="w-full bg-amber-gradient text-primary-foreground font-display uppercase tracking-wider font-semibold px-6 py-3.5 rounded-md shadow-glow-amber disabled:opacity-60">
               {loading ? "Creating…" : "Create Account"}
             </button>
