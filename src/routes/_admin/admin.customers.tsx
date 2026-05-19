@@ -12,10 +12,15 @@ function CustomersAdmin() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-customers"],
     queryFn: async () => {
-      const [profilesRes, rolesRes, invoicesRes] = await Promise.all([
+      const [profilesRes, rolesRes, invoicesRes, unreadRes] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("user_id, role"),
         supabase.from("invoices").select("customer_id, total_cents, status"),
+        supabase
+          .from("customer_messages")
+          .select("customer_id")
+          .eq("sender", "customer")
+          .eq("read_by_admin", false),
       ]);
       const adminIds = new Set(
         (rolesRes.data ?? []).filter((r) => r.role === "admin").map((r) => r.user_id),
@@ -30,7 +35,11 @@ function CustomersAdmin() {
         else if (inv.status === "sent") m.unpaid += inv.total_cents ?? 0;
         invoiceMap.set(inv.customer_id, m);
       }
-      return { customers, invoiceMap };
+      const unreadMap = new Map<string, number>();
+      for (const r of unreadRes.data ?? []) {
+        unreadMap.set(r.customer_id, (unreadMap.get(r.customer_id) ?? 0) + 1);
+      }
+      return { customers, invoiceMap, unreadMap };
     },
   });
 
