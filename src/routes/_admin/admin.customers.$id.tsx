@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Mail, Phone, Calendar, Wrench, FileText, Car, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
+import { ArrowLeft, Mail, Phone, Calendar, Wrench, FileText, Car, ExternalLink, MessageSquare, Send } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/customers/$id")({
   head: () => ({ meta: [{ title: "Customer Detail — Admin" }] }),
@@ -178,6 +180,135 @@ function CustomerDetail() {
           </ul>
         )}
       </Section>
+
+      {/* Messages */}
+      <MessagesPanel customerId={profile.id} customerName={profile.full_name ?? "customer"} />
+    </div>
+  );
+}
+
+function MessagesPanel({ customerId, customerName }: { customerId: string; customerName: string }) {
+  const qc = useQueryClient();
+  const [draft, setDraft] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const { data: messages, isLoading } = useQuery({
+    queryKey: ["admin-messages", customerId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("customer_messages")
+        .select("*")
+        .eq("customer_id", customerId)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Mark customer messages as read by admin when opened
+  useEffect(() => {
+    if (!messages?.some((m) => m.sender === "customer" && !m.read_by_admin)) return;
+    supabase
+      .from("customer_messages")
+      .update({ read_by_admin: true })
+      .eq("customer_id", customerId)
+      .eq("sender", "customer")
+      .eq("read_by_admin", false)
+      .then(() => qc.invalidateQueries({ queryKey: ["admin-messages", customerId] }));
+  }, [messages, customerId, qc]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, [messages?.length]);
+
+  const send = useMutation({
+    mutationFn: async (body: string) => {
+      const { error } = await supabase.from("customer_messages").insert({
+        customer_id: customerId,
+        sender: "admin",
+        body,
+        read_by_admin: true,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setDraft("");
+      qc.invalidateQueries({ queryKey: ["admin-messages", customerId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <div className="p-6 rounded-lg bg-surface border border-border">
+      <h3 className="font-display uppercase tracking-wide text-xl inline-flex items-center gap-2 mb-4">
+        <MessageSquare className="h-5 w-5 text-primary" /> Messages
+      </h3>
+
+      <div
+        ref={scrollRef}
+        className="max-h-96 overflow-y-auto space-y-3 p-3 rounded-md bg-background border border-border mb-3"
+      >
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : !messages?.length ? (
+          <p className="text-sm text-muted-foreground py-4 text-center">
+            No messages yet. Start the conversation with {customerName}.
+          </p>
+        ) : (
+          messages.map((m) => {
+            const mine = m.sender === "admin";
+            return (
+              <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+                    mine
+                      ? "bg-amber-gradient text-primary-foreground"
+                      : "bg-surface-elevated border border-border"
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                  <p className={`text-[10px] mt-1 ${mine ? "opacity-80" : "text-muted-foreground"}`}>
+                    {new Date(m.created_at).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const body = draft.trim();
+          if (!body) return;
+          send.mutate(body);
+        }}
+        className="flex gap-2"
+      >
+        <textarea
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              const body = draft.trim();
+              if (body) send.mutate(body);
+            }
+          }}
+          rows={2}
+          maxLength={4000}
+          placeholder={`Reply to ${customerName}…`}
+          className="flex-1 rounded-md bg-background border border-border px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary"
+        />
+        <button
+          type="submit"
+          disabled={send.isPending || !draft.trim()}
+          className="inline-flex items-center gap-1.5 bg-amber-gradient text-primary-foreground px-4 py-2 rounded-md text-sm font-display uppercase tracking-wide disabled:opacity-50 self-end"
+        >
+          <Send className="h-4 w-4" /> Send
+        </button>
+      </form>
     </div>
   );
 }
