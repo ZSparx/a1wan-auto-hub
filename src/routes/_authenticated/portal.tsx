@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Wrench, FileText, ExternalLink } from "lucide-react";
+import { Car, Wrench, FileText, ExternalLink, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({ meta: [{ title: "Customer Portal — A1wan Auto" }] }),
@@ -42,6 +42,17 @@ function Portal() {
     queryKey: ["portal-invoices"],
     queryFn: async () => (await supabase.from("invoices").select("*").order("created_at", { ascending: false })).data ?? [],
   });
+  const { data: unreadMessages } = useQuery({
+    queryKey: ["portal-unread-messages"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("customer_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("sender", "admin")
+        .eq("read_by_customer", false);
+      return count ?? 0;
+    },
+  });
 
   const unpaid = invoices?.filter((i) => i.status === "sent") ?? [];
   const active = workOrders?.filter((w) => w.status !== "completed") ?? [];
@@ -55,10 +66,11 @@ function Portal() {
         {userEmail && <p className="mt-1 text-sm text-muted-foreground">{userEmail}</p>}
       </header>
 
-      <div className="grid md:grid-cols-3 gap-5 mb-10">
+      <div className="grid md:grid-cols-4 gap-5 mb-10">
         <StatCard icon={Car} label="Vehicles" value={vehicles?.length ?? 0} />
         <StatCard icon={Wrench} label="Active Jobs" value={active.length} />
         <StatCard icon={FileText} label="Unpaid Invoices" value={unpaid.length} accent />
+        <StatCard icon={MessageSquare} label="New Messages" value={unreadMessages ?? 0} accent />
       </div>
 
       <Section title="Active Work Orders">

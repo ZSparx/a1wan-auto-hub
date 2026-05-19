@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Mail, Phone, FileText, ChevronRight } from "lucide-react";
+import { Users, Mail, Phone, FileText, ChevronRight, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/customers")({
   head: () => ({ meta: [{ title: "Customers — Admin" }] }),
@@ -12,10 +12,15 @@ function CustomersAdmin() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-customers"],
     queryFn: async () => {
-      const [profilesRes, rolesRes, invoicesRes] = await Promise.all([
+      const [profilesRes, rolesRes, invoicesRes, unreadRes] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("user_id, role"),
         supabase.from("invoices").select("customer_id, total_cents, status"),
+        supabase
+          .from("customer_messages")
+          .select("customer_id")
+          .eq("sender", "customer")
+          .eq("read_by_admin", false),
       ]);
       const adminIds = new Set(
         (rolesRes.data ?? []).filter((r) => r.role === "admin").map((r) => r.user_id),
@@ -30,7 +35,11 @@ function CustomersAdmin() {
         else if (inv.status === "sent") m.unpaid += inv.total_cents ?? 0;
         invoiceMap.set(inv.customer_id, m);
       }
-      return { customers, invoiceMap };
+      const unreadMap = new Map<string, number>();
+      for (const r of unreadRes.data ?? []) {
+        unreadMap.set(r.customer_id, (unreadMap.get(r.customer_id) ?? 0) + 1);
+      }
+      return { customers, invoiceMap, unreadMap };
     },
   });
 
@@ -50,6 +59,7 @@ function CustomersAdmin() {
         <div className="space-y-3">
           {data.customers.map((c) => {
             const stats = data.invoiceMap.get(c.id) ?? { count: 0, unpaid: 0, paid: 0 };
+            const unread = data.unreadMap.get(c.id) ?? 0;
             return (
               <Link
                 key={c.id}
@@ -58,8 +68,13 @@ function CustomersAdmin() {
                 className="p-5 rounded-lg bg-surface border border-border flex flex-wrap items-start justify-between gap-4 hover:border-primary/40 transition"
               >
                 <div>
-                  <p className="font-display uppercase tracking-wide text-lg">
+                  <p className="font-display uppercase tracking-wide text-lg inline-flex items-center gap-2">
                     {c.full_name ?? "Unnamed customer"}
+                    {unread > 0 && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-gradient text-primary-foreground">
+                        <MessageSquare className="h-3 w-3" /> {unread} new
+                      </span>
+                    )}
                   </p>
                   <div className="mt-1 text-sm text-muted-foreground space-y-0.5">
                     {c.email && (
