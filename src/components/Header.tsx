@@ -40,13 +40,13 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         <Logo />
 
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              className="px-3 py-2 text-sm font-medium tracking-wide uppercase text-muted-foreground hover:text-foreground transition-colors"
-              activeProps={{ className: "px-3 py-2 text-sm font-medium tracking-wide uppercase text-primary" }}
+              className="px-2 py-2 text-sm font-medium tracking-wide uppercase text-muted-foreground hover:text-foreground transition-colors"
+              activeProps={{ className: "px-2 py-2 text-sm font-medium tracking-wide uppercase text-primary" }}
               activeOptions={{ exact: l.to === "/" }}
             >
               {l.label}
@@ -54,7 +54,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <Link
             to="/contact"
             className="inline-flex items-center gap-2 bg-amber-gradient text-primary-foreground font-display font-semibold tracking-wide uppercase text-sm px-4 py-2 rounded-md shadow-glow-amber hover:brightness-110 transition"
@@ -105,18 +105,28 @@ export function Header() {
           )}
         </div>
 
-        <button
-          type="button"
-          className="lg:hidden p-2 text-foreground"
-          onClick={() => setMobileOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          {session && isAdmin && (
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-display uppercase tracking-wider bg-primary/15 text-primary border border-primary/40"
+            >
+              <ShieldCheck className="h-4 w-4" /> Admin
+            </Link>
+          )}
+          <button
+            type="button"
+            className="p-2 text-foreground"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-surface">
+        <div className="md:hidden border-t border-border bg-surface">
           <div className="px-4 py-4 flex flex-col gap-1">
             {navLinks.map((l) => (
               <Link
