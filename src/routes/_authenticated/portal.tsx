@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Wrench, FileText, ExternalLink } from "lucide-react";
+import { Car, Wrench, FileText, ExternalLink, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({ meta: [{ title: "Customer Portal — A1wan Auto" }] }),
