@@ -1,31 +1,37 @@
-## Goal
+## Today's behavior
 
-Let the very first user become the shop admin without needing manual SQL, while keeping the system safe from privilege escalation afterward.
+In **Admin → Cars for Sale → New listing**, the only way to attach a photo is to paste a hosted image URL into a text field. There is no actual file upload, so you'd have to host the image somewhere else first.
 
-## How it works
+## What I'll add
 
-1. New page at `/admin-setup` (public route).
-2. Page calls a server function `bootstrapAdmin` that:
-   - Checks `user_roles` — if ANY row with `role = 'admin'` already exists, the function refuses (returns "Admin already configured").
-   - Otherwise, requires the caller to be authenticated (via `requireSupabaseAuth`) and inserts an `admin` role row for `auth.uid()` using the service-role client (bypasses RLS safely because of the "no existing admin" guard).
-3. UI flow on `/admin-setup`:
-   - If not signed in → shows "Sign up or log in first" with links to `/signup` and `/login?redirect=/admin-setup`.
-   - If signed in and no admin exists → shows a "Make me the admin" button. On success, redirects to `/admin`.
-   - If signed in and an admin already exists → shows "Admin is already configured. Contact the current admin to grant you access." with a link home.
-4. Add a subtle "First-time setup" link in the footer pointing to `/admin-setup` so the owner can find it; remove/hide it automatically once an admin exists (server fn `adminExists` checked on mount).
+Real photo uploads from your computer or phone, stored in Lovable Cloud, with a public URL automatically saved on the listing. One main photo per car (matches the current `image_url` field), admins-only access. The public `/cars-for-sale` page keeps working unchanged — it just reads `image_url` like today.
 
-## Security
+### 1. Storage bucket
 
-- Single-use by construction: the "no existing admin" check makes the endpoint inert after first use.
-- Uses `supabaseAdmin` only inside the server fn after both checks pass.
-- No client-side role assignment; RLS on `user_roles` remains "admins only".
+Create a public-read storage bucket `car-photos` with admin-only write/delete. Files keyed as `{carId-or-uuid}/{timestamp}-{filename}`.
 
-## Files
+### 2. Admin upload UI
 
-- New: `src/lib/admin-bootstrap.functions.ts` — `adminExists`, `bootstrapAdmin` server fns.
-- New: `src/routes/admin-setup.tsx` — the setup page.
-- Edit: `src/components/Footer.tsx` — conditional "First-time setup" link.
+In `src/routes/_admin/admin.cars.tsx`, replace the "Image URL" text input with a drop zone + file picker that:
+- Accepts JPG / PNG / WebP, max ~8 MB
+- Shows a live preview after selection
+- On submit, uploads to `car-photos` via `supabase.storage`, gets the public URL, and saves it as `image_url` on the new listing
+- Lets you replace or remove the photo on existing listings (same upload control on each card)
 
-## After this ships
+### 3. Cleanup
 
-Owner flow: sign up at `/signup` → visit `/admin-setup` → click the button → land on `/admin`. From then on, additional admins are added by the existing admin from within the dashboard (future enhancement, not in this plan).
+When a listing is deleted or its photo is replaced, the old file is removed from the bucket so storage doesn't accumulate stale images.
+
+## Technical notes
+
+- Bucket: `storage.buckets` row with `public = true`; RLS on `storage.objects` — public `SELECT` for `bucket_id = 'car-photos'`, `INSERT`/`UPDATE`/`DELETE` gated by `has_role(auth.uid(), 'admin')`.
+- Upload happens client-side from the admin page using the existing `supabase` browser client (admin is authenticated, RLS enforces the role check).
+- Path convention: `car-photos/{listing_id_or_temp_uuid}/{Date.now()}-{sanitizedName}`.
+- File validation in the form before upload (MIME type + size). Toast on failure.
+- No schema change needed — we keep `cars_for_sale.image_url text` and just populate it with the storage public URL.
+
+## Out of scope (say the word if you want them)
+
+- Multiple photos / gallery per listing (would need a `car_images` table)
+- Image resizing/optimization
+- A separate "staff" role
