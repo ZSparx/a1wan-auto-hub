@@ -31,6 +31,7 @@ import { Route as AdminAdminInvoicesRouteImport } from './routes/_admin/admin.in
 import { Route as AdminAdminCustomersRouteImport } from './routes/_admin/admin.customers'
 import { Route as AdminAdminCarsRouteImport } from './routes/_admin/admin.cars'
 import { Route as AdminAdminBookingsRouteImport } from './routes/_admin/admin.bookings'
+import { Route as AdminAdminCustomersIdRouteImport } from './routes/_admin/admin.customers.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -140,6 +141,11 @@ const AdminAdminBookingsRoute = AdminAdminBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminCustomersIdRoute = AdminAdminCustomersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminAdminCustomersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -157,11 +163,12 @@ export interface FileRoutesByFullPath {
   '/status/$token': typeof StatusTokenRoute
   '/admin/bookings': typeof AdminAdminBookingsRoute
   '/admin/cars': typeof AdminAdminCarsRoute
-  '/admin/customers': typeof AdminAdminCustomersRoute
+  '/admin/customers': typeof AdminAdminCustomersRouteWithChildren
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
   '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
+  '/admin/customers/$id': typeof AdminAdminCustomersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -179,11 +186,12 @@ export interface FileRoutesByTo {
   '/status/$token': typeof StatusTokenRoute
   '/admin/bookings': typeof AdminAdminBookingsRoute
   '/admin/cars': typeof AdminAdminCarsRoute
-  '/admin/customers': typeof AdminAdminCustomersRoute
+  '/admin/customers': typeof AdminAdminCustomersRouteWithChildren
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
   '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
+  '/admin/customers/$id': typeof AdminAdminCustomersIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -204,11 +212,12 @@ export interface FileRoutesById {
   '/status/$token': typeof StatusTokenRoute
   '/_admin/admin/bookings': typeof AdminAdminBookingsRoute
   '/_admin/admin/cars': typeof AdminAdminCarsRoute
-  '/_admin/admin/customers': typeof AdminAdminCustomersRoute
+  '/_admin/admin/customers': typeof AdminAdminCustomersRouteWithChildren
   '/_admin/admin/invoices': typeof AdminAdminInvoicesRoute
   '/_admin/admin/messages': typeof AdminAdminMessagesRoute
   '/_admin/admin/reports': typeof AdminAdminReportsRoute
   '/_admin/admin/work-orders': typeof AdminAdminWorkOrdersRoute
+  '/_admin/admin/customers/$id': typeof AdminAdminCustomersIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/reports'
     | '/admin/work-orders'
+    | '/admin/customers/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/reports'
     | '/admin/work-orders'
+    | '/admin/customers/$id'
   id:
     | '__root__'
     | '/'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/messages'
     | '/_admin/admin/reports'
     | '/_admin/admin/work-orders'
+    | '/_admin/admin/customers/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -452,13 +464,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminBookingsRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/_admin/admin/customers/$id': {
+      id: '/_admin/admin/customers/$id'
+      path: '/$id'
+      fullPath: '/admin/customers/$id'
+      preLoaderRoute: typeof AdminAdminCustomersIdRouteImport
+      parentRoute: typeof AdminAdminCustomersRoute
+    }
   }
 }
+
+interface AdminAdminCustomersRouteChildren {
+  AdminAdminCustomersIdRoute: typeof AdminAdminCustomersIdRoute
+}
+
+const AdminAdminCustomersRouteChildren: AdminAdminCustomersRouteChildren = {
+  AdminAdminCustomersIdRoute: AdminAdminCustomersIdRoute,
+}
+
+const AdminAdminCustomersRouteWithChildren =
+  AdminAdminCustomersRoute._addFileChildren(AdminAdminCustomersRouteChildren)
 
 interface AdminAdminRouteChildren {
   AdminAdminBookingsRoute: typeof AdminAdminBookingsRoute
   AdminAdminCarsRoute: typeof AdminAdminCarsRoute
-  AdminAdminCustomersRoute: typeof AdminAdminCustomersRoute
+  AdminAdminCustomersRoute: typeof AdminAdminCustomersRouteWithChildren
   AdminAdminInvoicesRoute: typeof AdminAdminInvoicesRoute
   AdminAdminMessagesRoute: typeof AdminAdminMessagesRoute
   AdminAdminReportsRoute: typeof AdminAdminReportsRoute
@@ -468,7 +498,7 @@ interface AdminAdminRouteChildren {
 const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminBookingsRoute: AdminAdminBookingsRoute,
   AdminAdminCarsRoute: AdminAdminCarsRoute,
-  AdminAdminCustomersRoute: AdminAdminCustomersRoute,
+  AdminAdminCustomersRoute: AdminAdminCustomersRouteWithChildren,
   AdminAdminInvoicesRoute: AdminAdminInvoicesRoute,
   AdminAdminMessagesRoute: AdminAdminMessagesRoute,
   AdminAdminReportsRoute: AdminAdminReportsRoute,

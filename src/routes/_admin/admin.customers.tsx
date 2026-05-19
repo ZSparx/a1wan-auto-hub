@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Mail, Phone, FileText } from "lucide-react";
+import { Users, Mail, Phone, FileText, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/customers")({
   head: () => ({ meta: [{ title: "Customers — Admin" }] }),
@@ -51,9 +51,11 @@ function CustomersAdmin() {
           {data.customers.map((c) => {
             const stats = data.invoiceMap.get(c.id) ?? { count: 0, unpaid: 0, paid: 0 };
             return (
-              <div
+              <Link
                 key={c.id}
-                className="p-5 rounded-lg bg-surface border border-border flex flex-wrap items-start justify-between gap-4"
+                to="/admin/customers/$id"
+                params={{ id: c.id }}
+                className="p-5 rounded-lg bg-surface border border-border flex flex-wrap items-start justify-between gap-4 hover:border-primary/40 transition"
               >
                 <div>
                   <p className="font-display uppercase tracking-wide text-lg">
@@ -75,7 +77,7 @@ function CustomersAdmin() {
                     Joined {new Date(c.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end">
                   <p className="text-xs font-display uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1 justify-end">
                     <FileText className="h-3 w-3" /> {stats.count} invoice{stats.count === 1 ? "" : "s"}
                   </p>
@@ -89,8 +91,9 @@ function CustomersAdmin() {
                       Paid: ${(stats.paid / 100).toFixed(2)}
                     </p>
                   )}
+                  <ChevronRight className="h-4 w-4 text-muted-foreground mt-2" />
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
