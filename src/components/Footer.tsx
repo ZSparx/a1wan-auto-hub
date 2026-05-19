@@ -30,7 +30,7 @@ export function Footer() {
             <li><Link to="/cars-for-sale" className="text-muted-foreground hover:text-primary">Cars for Sale</Link></li>
             <li><Link to="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
             <li><Link to="/portal" className="text-muted-foreground hover:text-primary">Customer Portal</Link></li>
-            <li><Link to="/admin-setup" className="text-muted-foreground/60 hover:text-primary text-xs">First-time setup</Link></li>
+            
           </ul>
         </div>
       </div>
