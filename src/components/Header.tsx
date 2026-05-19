@@ -82,7 +82,7 @@ export function Header() {
               <Link
                 to="/portal"
                 className="p-2 text-muted-foreground hover:text-foreground transition"
-                aria-label="Customer portal"
+                aria-label="Admin"
               >
                 <User className="h-5 w-5" />
               </Link>

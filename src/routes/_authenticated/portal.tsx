@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Car, Wrench, FileText, ExternalLink, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
-  head: () => ({ meta: [{ title: "Customer Portal — A1wan Auto" }] }),
+  head: () => ({ meta: [{ title: "Admin — A1wan Auto" }] }),
   component: Portal,
 });
 
@@ -61,7 +61,7 @@ function Portal() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
       <header className="mb-10">
         <p className="text-primary font-display tracking-widest uppercase text-sm mb-2">Your account</p>
-        <h1 className="font-display font-bold uppercase text-4xl sm:text-5xl tracking-tight">Customer Portal</h1>
+        <h1 className="font-display font-bold uppercase text-4xl sm:text-5xl tracking-tight">Admin</h1>
         {displayName && <p className="mt-2 text-xl font-display tracking-wide">{displayName}</p>}
         {userEmail && <p className="mt-1 text-sm text-muted-foreground">{userEmail}</p>}
       </header>
