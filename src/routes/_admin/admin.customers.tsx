@@ -59,6 +59,7 @@ function CustomersAdmin() {
         <div className="space-y-3">
           {data.customers.map((c) => {
             const stats = data.invoiceMap.get(c.id) ?? { count: 0, unpaid: 0, paid: 0 };
+            const unread = data.unreadMap.get(c.id) ?? 0;
             return (
               <Link
                 key={c.id}
@@ -67,8 +68,13 @@ function CustomersAdmin() {
                 className="p-5 rounded-lg bg-surface border border-border flex flex-wrap items-start justify-between gap-4 hover:border-primary/40 transition"
               >
                 <div>
-                  <p className="font-display uppercase tracking-wide text-lg">
+                  <p className="font-display uppercase tracking-wide text-lg inline-flex items-center gap-2">
                     {c.full_name ?? "Unnamed customer"}
+                    {unread > 0 && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-gradient text-primary-foreground">
+                        <MessageSquare className="h-3 w-3" /> {unread} new
+                      </span>
+                    )}
                   </p>
                   <div className="mt-1 text-sm text-muted-foreground space-y-0.5">
                     {c.email && (
