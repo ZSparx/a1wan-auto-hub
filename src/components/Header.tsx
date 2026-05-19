@@ -80,9 +80,9 @@ export function Header() {
                 </Link>
               )}
               <Link
-                to="/portal"
+                to={isAdmin ? "/portal" : "/customer-portal"}
                 className="p-2 text-muted-foreground hover:text-foreground transition"
-                aria-label="Admin"
+                aria-label={isAdmin ? "Admin" : "Customer portal"}
               >
                 <User className="h-5 w-5" />
               </Link>
@@ -155,8 +155,8 @@ export function Header() {
                     Admin Dashboard
                   </Link>
                 )}
-                <Link to="/portal" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
-                  My Portal
+                <Link to={isAdmin ? "/portal" : "/customer-portal"} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
+                  {isAdmin ? "My Portal" : "Customer Portal"}
                 </Link>
                 <button onClick={handleSignOut} className="px-3 py-3 text-left text-sm text-muted-foreground hover:text-foreground">
                   Sign out

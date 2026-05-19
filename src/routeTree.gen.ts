@@ -22,6 +22,7 @@ import { Route as StatusTokenRouteImport } from './routes/status.$token'
 import { Route as PayTokenRouteImport } from './routes/pay.$token'
 import { Route as CarsForSaleIdRouteImport } from './routes/cars-for-sale.$id'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AuthenticatedCustomerPortalRouteImport } from './routes/_authenticated/customer-portal'
 import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
 import { Route as AdminAdminWorkOrdersRouteImport } from './routes/_admin/admin.work-orders'
 import { Route as AdminAdminReportsRouteImport } from './routes/_admin/admin.reports'
@@ -95,6 +96,12 @@ const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCustomerPortalRoute =
+  AuthenticatedCustomerPortalRouteImport.update({
+    id: '/customer-portal',
+    path: '/customer-portal',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AdminAdminRoute = AdminAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -150,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AdminAdminRouteWithChildren
+  '/customer-portal': typeof AuthenticatedCustomerPortalRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
   '/pay/$token': typeof PayTokenRoute
@@ -172,6 +180,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AdminAdminRouteWithChildren
+  '/customer-portal': typeof AuthenticatedCustomerPortalRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
   '/pay/$token': typeof PayTokenRoute
@@ -197,6 +206,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/signup': typeof SignupRoute
   '/_admin/admin': typeof AdminAdminRouteWithChildren
+  '/_authenticated/customer-portal': typeof AuthenticatedCustomerPortalRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
   '/pay/$token': typeof PayTokenRoute
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/signup'
     | '/admin'
+    | '/customer-portal'
     | '/portal'
     | '/cars-for-sale/$id'
     | '/pay/$token'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/signup'
     | '/admin'
+    | '/customer-portal'
     | '/portal'
     | '/cars-for-sale/$id'
     | '/pay/$token'
@@ -267,6 +279,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/signup'
     | '/_admin/admin'
+    | '/_authenticated/customer-portal'
     | '/_authenticated/portal'
     | '/cars-for-sale/$id'
     | '/pay/$token'
@@ -388,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/customer-portal': {
+      id: '/_authenticated/customer-portal'
+      path: '/customer-portal'
+      fullPath: '/customer-portal'
+      preLoaderRoute: typeof AuthenticatedCustomerPortalRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_admin/admin': {
       id: '/_admin/admin'
       path: '/admin'
@@ -500,10 +520,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedCustomerPortalRoute: typeof AuthenticatedCustomerPortalRoute
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCustomerPortalRoute: AuthenticatedCustomerPortalRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
 }
 
