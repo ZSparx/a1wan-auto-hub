@@ -105,18 +105,28 @@ export function Header() {
           )}
         </div>
 
-        <button
-          type="button"
-          className="lg:hidden p-2 text-foreground"
-          onClick={() => setMobileOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          {session && isAdmin && (
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-display uppercase tracking-wider bg-primary/15 text-primary border border-primary/40"
+            >
+              <ShieldCheck className="h-4 w-4" /> Admin
+            </Link>
+          )}
+          <button
+            type="button"
+            className="p-2 text-foreground"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-surface">
+        <div className="md:hidden border-t border-border bg-surface">
           <div className="px-4 py-4 flex flex-col gap-1">
             {navLinks.map((l) => (
               <Link
