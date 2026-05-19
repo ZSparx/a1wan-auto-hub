@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Mail, Phone, FileText } from "lucide-react";
+import { Users, Mail, Phone, FileText, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/customers")({
   head: () => ({ meta: [{ title: "Customers — Admin" }] }),
