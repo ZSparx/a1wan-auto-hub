@@ -28,6 +28,7 @@ import { Route as AdminAdminWorkOrdersRouteImport } from './routes/_admin/admin.
 import { Route as AdminAdminReportsRouteImport } from './routes/_admin/admin.reports'
 import { Route as AdminAdminMessagesRouteImport } from './routes/_admin/admin.messages'
 import { Route as AdminAdminInvoicesRouteImport } from './routes/_admin/admin.invoices'
+import { Route as AdminAdminCustomersRouteImport } from './routes/_admin/admin.customers'
 import { Route as AdminAdminCarsRouteImport } from './routes/_admin/admin.cars'
 import { Route as AdminAdminBookingsRouteImport } from './routes/_admin/admin.bookings'
 
@@ -124,6 +125,11 @@ const AdminAdminInvoicesRoute = AdminAdminInvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminCustomersRoute = AdminAdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminCarsRoute = AdminAdminCarsRouteImport.update({
   id: '/cars',
   path: '/cars',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/status/$token': typeof StatusTokenRoute
   '/admin/bookings': typeof AdminAdminBookingsRoute
   '/admin/cars': typeof AdminAdminCarsRoute
+  '/admin/customers': typeof AdminAdminCustomersRoute
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/status/$token': typeof StatusTokenRoute
   '/admin/bookings': typeof AdminAdminBookingsRoute
   '/admin/cars': typeof AdminAdminCarsRoute
+  '/admin/customers': typeof AdminAdminCustomersRoute
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/status/$token': typeof StatusTokenRoute
   '/_admin/admin/bookings': typeof AdminAdminBookingsRoute
   '/_admin/admin/cars': typeof AdminAdminCarsRoute
+  '/_admin/admin/customers': typeof AdminAdminCustomersRoute
   '/_admin/admin/invoices': typeof AdminAdminInvoicesRoute
   '/_admin/admin/messages': typeof AdminAdminMessagesRoute
   '/_admin/admin/reports': typeof AdminAdminReportsRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/status/$token'
     | '/admin/bookings'
     | '/admin/cars'
+    | '/admin/customers'
     | '/admin/invoices'
     | '/admin/messages'
     | '/admin/reports'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/status/$token'
     | '/admin/bookings'
     | '/admin/cars'
+    | '/admin/customers'
     | '/admin/invoices'
     | '/admin/messages'
     | '/admin/reports'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/status/$token'
     | '/_admin/admin/bookings'
     | '/_admin/admin/cars'
+    | '/_admin/admin/customers'
     | '/_admin/admin/invoices'
     | '/_admin/admin/messages'
     | '/_admin/admin/reports'
@@ -419,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminInvoicesRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/_admin/admin/customers': {
+      id: '/_admin/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminAdminCustomersRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_admin/admin/cars': {
       id: '/_admin/admin/cars'
       path: '/cars'
@@ -439,6 +458,7 @@ declare module '@tanstack/react-router' {
 interface AdminAdminRouteChildren {
   AdminAdminBookingsRoute: typeof AdminAdminBookingsRoute
   AdminAdminCarsRoute: typeof AdminAdminCarsRoute
+  AdminAdminCustomersRoute: typeof AdminAdminCustomersRoute
   AdminAdminInvoicesRoute: typeof AdminAdminInvoicesRoute
   AdminAdminMessagesRoute: typeof AdminAdminMessagesRoute
   AdminAdminReportsRoute: typeof AdminAdminReportsRoute
@@ -448,6 +468,7 @@ interface AdminAdminRouteChildren {
 const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminBookingsRoute: AdminAdminBookingsRoute,
   AdminAdminCarsRoute: AdminAdminCarsRoute,
+  AdminAdminCustomersRoute: AdminAdminCustomersRoute,
   AdminAdminInvoicesRoute: AdminAdminInvoicesRoute,
   AdminAdminMessagesRoute: AdminAdminMessagesRoute,
   AdminAdminReportsRoute: AdminAdminReportsRoute,
