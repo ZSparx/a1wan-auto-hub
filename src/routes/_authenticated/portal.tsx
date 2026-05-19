@@ -66,10 +66,11 @@ function Portal() {
         {userEmail && <p className="mt-1 text-sm text-muted-foreground">{userEmail}</p>}
       </header>
 
-      <div className="grid md:grid-cols-3 gap-5 mb-10">
+      <div className="grid md:grid-cols-4 gap-5 mb-10">
         <StatCard icon={Car} label="Vehicles" value={vehicles?.length ?? 0} />
         <StatCard icon={Wrench} label="Active Jobs" value={active.length} />
         <StatCard icon={FileText} label="Unpaid Invoices" value={unpaid.length} accent />
+        <StatCard icon={MessageSquare} label="New Messages" value={unreadMessages ?? 0} accent />
       </div>
 
       <Section title="Active Work Orders">
