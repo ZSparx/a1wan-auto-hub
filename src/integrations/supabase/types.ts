@@ -148,6 +148,44 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_messages: {
+        Row: {
+          body: string
+          created_at: string
+          customer_id: string
+          id: string
+          read_by_admin: boolean
+          read_by_customer: boolean
+          sender: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          read_by_admin?: boolean
+          read_by_customer?: boolean
+          sender: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          read_by_admin?: boolean
+          read_by_customer?: boolean
+          sender?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_messages_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           created_at: string
