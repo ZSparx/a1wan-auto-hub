@@ -205,6 +205,13 @@ function MessagesPanel({ customerId, customerName }: { customerId: string; custo
     },
   });
 
+  // Capture unread count on first load before auto-marking as read
+  const [initialUnread, setInitialUnread] = useState<number | null>(null);
+  useEffect(() => {
+    if (!messages || initialUnread !== null) return;
+    setInitialUnread(messages.filter((m) => m.sender === "customer" && !m.read_by_admin).length);
+  }, [messages, initialUnread]);
+
   // Mark customer messages as read by admin when opened
   useEffect(() => {
     if (!messages?.some((m) => m.sender === "customer" && !m.read_by_admin)) return;
@@ -238,10 +245,21 @@ function MessagesPanel({ customerId, customerName }: { customerId: string; custo
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const unreadCount = initialUnread ?? 0;
+
   return (
     <div className="p-6 rounded-lg bg-surface border border-border">
-      <h3 className="font-display uppercase tracking-wide text-xl inline-flex items-center gap-2 mb-4">
+      <h3 className="font-display uppercase tracking-wide text-xl inline-flex items-center gap-2 mb-4 flex-wrap">
         <MessageSquare className="h-5 w-5 text-primary" /> Messages
+        {unreadCount > 0 ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-gradient text-primary-foreground">
+            {unreadCount} new {unreadCount === 1 ? "message" : "messages"}
+          </span>
+        ) : (
+          <span className="text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+            All caught up
+          </span>
+        )}
       </h3>
 
       <div
