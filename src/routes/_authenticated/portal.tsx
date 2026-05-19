@@ -42,6 +42,17 @@ function Portal() {
     queryKey: ["portal-invoices"],
     queryFn: async () => (await supabase.from("invoices").select("*").order("created_at", { ascending: false })).data ?? [],
   });
+  const { data: unreadMessages } = useQuery({
+    queryKey: ["portal-unread-messages"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("customer_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("sender", "admin")
+        .eq("read_by_customer", false);
+      return count ?? 0;
+    },
+  });
 
   const unpaid = invoices?.filter((i) => i.status === "sent") ?? [];
   const active = workOrders?.filter((w) => w.status !== "completed") ?? [];
