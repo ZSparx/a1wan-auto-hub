@@ -172,3 +172,123 @@ function BookingsAdmin() {
     </div>
   );
 }
+
+function QuoteInvoiceForm({ booking, onClose, onCreated }: { booking: Booking; onClose: () => void; onCreated: () => void }) {
+  const [items, setItems] = useState<LineItem[]>([
+    { description: booking.service, quantity: 1, unit_price_cents: 0 },
+  ]);
+  const [taxPct, setTaxPct] = useState(8.25);
+  const [dueDate, setDueDate] = useState("");
+  const [sendNow, setSendNow] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const subtotal = items.reduce((a, it) => a + Math.round(it.quantity * it.unit_price_cents), 0);
+  const tax = Math.round(subtotal * (taxPct / 100));
+  const total = subtotal + tax;
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      // Ensure a work order exists so the invoice attaches to service history
+      let workOrderId = booking.work_order_id;
+      if (!workOrderId) {
+        const { data: wo, error: woErr } = await supabase.from("work_orders").insert({
+          customer_id: booking.customer_id,
+          customer_name: booking.customer_name,
+          customer_phone: booking.customer_phone,
+          vehicle_description: booking.vehicle_description || "Vehicle not specified",
+          description: `${booking.service}${booking.notes ? ` — ${booking.notes}` : ""}`,
+          status: "intake" as const,
+        }).select().single();
+        if (woErr) throw woErr;
+        workOrderId = wo.id;
+        await supabase.from("bookings").update({ status: "in_progress", work_order_id: workOrderId }).eq("id", booking.id);
+      }
+
+      const { data: inv, error } = await supabase.from("invoices").insert({
+        work_order_id: workOrderId,
+        customer_id: booking.customer_id,
+        customer_name: booking.customer_name,
+        customer_email: booking.customer_email,
+        subtotal_cents: subtotal,
+        tax_cents: tax,
+        total_cents: total,
+        due_date: dueDate || null,
+        status: sendNow ? "sent" : "draft",
+      }).select().single();
+      if (error || !inv) throw error ?? new Error("Failed to create invoice");
+
+      const itemsToInsert = items.filter((it) => it.description.trim()).map((it) => ({
+        invoice_id: inv.id, description: it.description, quantity: it.quantity, unit_price_cents: it.unit_price_cents,
+      }));
+      if (itemsToInsert.length) {
+        const { error: e2 } = await supabase.from("invoice_items").insert(itemsToInsert);
+        if (e2) throw e2;
+      }
+
+      if (booking.customer_id) {
+        await supabase.from("customer_messages").insert({
+          customer_id: booking.customer_id,
+          sender: "admin",
+          body: sendNow
+            ? `We've sent you an invoice for ${booking.service} — total $${(total / 100).toFixed(2)}. View & pay: ${window.location.origin}/pay/${inv.public_token}`
+            : `We've drafted a quote for ${booking.service} — total $${(total / 100).toFixed(2)}. We'll follow up shortly.`,
+          read_by_customer: false,
+        });
+      }
+
+      toast.success(sendNow ? "Invoice sent to customer" : "Draft invoice saved");
+      onCreated();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="mt-4 p-4 rounded-lg bg-surface-elevated border border-primary/30 space-y-3">
+      <div className="flex items-center justify-between">
+        <h4 className="font-display uppercase tracking-wide text-sm inline-flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /> Quote for {booking.customer_name}</h4>
+        <span className="text-xs text-muted-foreground">{booking.customer_email}</span>
+      </div>
+      <div className="space-y-2">
+        {items.map((it, idx) => (
+          <div key={idx} className="grid grid-cols-[1fr_60px_100px_30px] gap-2">
+            <input placeholder="Description" value={it.description} onChange={(e) => setItems(items.map((x, i) => i === idx ? { ...x, description: e.target.value } : x))} className="rounded-md bg-background border border-border px-3 py-2 text-sm" />
+            <input type="number" min={0} step={0.5} value={it.quantity} onChange={(e) => setItems(items.map((x, i) => i === idx ? { ...x, quantity: Number(e.target.value) } : x))} className="rounded-md bg-background border border-border px-2 py-2 text-sm" />
+            <input type="number" min={0} placeholder="Price $" value={it.unit_price_cents / 100} onChange={(e) => setItems(items.map((x, i) => i === idx ? { ...x, unit_price_cents: Math.round(Number(e.target.value) * 100) } : x))} className="rounded-md bg-background border border-border px-2 py-2 text-sm" />
+            <button type="button" onClick={() => setItems(items.filter((_, i) => i !== idx))} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4 mx-auto" /></button>
+          </div>
+        ))}
+        <button type="button" onClick={() => setItems([...items, { description: "", quantity: 1, unit_price_cents: 0 }])} className="text-xs text-primary inline-flex items-center gap-1"><Plus className="h-3 w-3" /> Add line</button>
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-display uppercase tracking-wider text-muted-foreground">Tax %</label>
+          <input type="number" step={0.01} value={taxPct} onChange={(e) => setTaxPct(Number(e.target.value))} className="w-20 rounded-md bg-background border border-border px-2 py-1.5 text-sm" />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-display uppercase tracking-wider text-muted-foreground">Due</label>
+          <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="rounded-md bg-background border border-border px-2 py-1.5 text-sm" />
+        </div>
+        <label className="text-xs font-display uppercase tracking-wider text-muted-foreground inline-flex items-center gap-2 ml-auto">
+          <input type="checkbox" checked={sendNow} onChange={(e) => setSendNow(e.target.checked)} /> Send to customer now
+        </label>
+      </div>
+      <div className="flex items-center justify-between border-t border-border pt-3">
+        <div className="text-sm text-muted-foreground">
+          Subtotal ${(subtotal / 100).toFixed(2)} · Tax ${(tax / 100).toFixed(2)}
+        </div>
+        <div className="font-display text-2xl text-primary">${(total / 100).toFixed(2)}</div>
+      </div>
+      <div className="flex gap-2 justify-end">
+        <button type="button" onClick={onClose} className="px-3 py-2 text-sm text-muted-foreground">Cancel</button>
+        <button disabled={saving || total === 0} className="inline-flex items-center gap-2 bg-amber-gradient text-primary-foreground px-4 py-2 rounded-md text-sm font-display uppercase tracking-wide disabled:opacity-60">
+          {sendNow ? <><Send className="h-4 w-4" /> {saving ? "Sending…" : "Send Invoice"}</> : <>{saving ? "Saving…" : "Save Draft"}</>}
+        </button>
+      </div>
+    </form>
+  );
+}
