@@ -165,13 +165,6 @@ function BookingsAdmin() {
                   onCreated={() => { qc.invalidateQueries({ queryKey: ["admin-bookings"] }); setQuoteFor(null); }}
                 />
               )}
-                    className="inline-flex items-center gap-2 border border-border bg-background px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-destructive hover:border-destructive transition"
-                    aria-label="Delete"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
             </div>
           ))}
         </div>
