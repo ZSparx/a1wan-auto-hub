@@ -24,6 +24,7 @@ const STATUSES = ["requested", "scheduled", "in_progress", "completed", "cancell
 function BookingsAdmin() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<string>("all");
+  const [quoteFor, setQuoteFor] = useState<string | null>(null);
   const { data: bookings, isLoading } = useQuery({
     queryKey: ["admin-bookings"],
     queryFn: async () => {
