@@ -3,7 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CalendarClock, Wrench, Trash2, Check } from "lucide-react";
+import { CalendarClock, Wrench, Trash2, Check, FileText, Plus, Send } from "lucide-react";
+
+type LineItem = { description: string; quantity: number; unit_price_cents: number };
 
 export const Route = createFileRoute("/_admin/admin/bookings")({
   head: () => ({ meta: [{ title: "Bookings — Admin" }] }),
