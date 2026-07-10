@@ -70,7 +70,18 @@ function CustomerPortal() {
         <StatCard icon={Car} label="Vehicles" value={vehicles?.length ?? 0} />
         <StatCard icon={Wrench} label="Active Jobs" value={active.length} />
         <StatCard icon={FileText} label="Unpaid Invoices" value={unpaid.length} accent />
-        <StatCard icon={MessageSquare} label="New Messages" value={unreadMessages ?? 0} accent />
+        <Link to="/customer-portal/messages" className="block hover:opacity-90 transition-opacity">
+          <StatCard icon={MessageSquare} label="Messages" value={unreadMessages ?? 0} accent />
+        </Link>
+      </div>
+
+      <div className="mb-10 flex justify-end">
+        <Link
+          to="/customer-portal/messages"
+          className="inline-flex items-center gap-2 bg-amber-gradient text-primary-foreground font-display uppercase tracking-wider text-sm px-4 py-2.5 rounded-md shadow-glow-amber"
+        >
+          <MessageSquare className="h-4 w-4" /> Message the shop
+        </Link>
       </div>
 
       <Section title="Active Work Orders">
