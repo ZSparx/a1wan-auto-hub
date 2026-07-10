@@ -1,37 +1,36 @@
-## Today's behavior
+# Customer Messaging in Portal
 
-In **Admin → Cars for Sale → New listing**, the only way to attach a photo is to paste a hosted image URL into a text field. There is no actual file upload, so you'd have to host the image somewhere else first.
+## What exists today
+- Signup → `profiles` row + `customer` role auto-created via `handle_new_user()` trigger. ✅
+- Service history (vehicles, work orders, invoices) already shown in `/customer-portal`. ✅
+- `customer_messages` table with `sender` (`customer`/`admin`), `read_by_customer`, `read_by_admin`. Admins can send from `/admin/messages`. ✅
+- Portal dashboard shows unread-from-admin count but has **no way for the customer to send or read messages**.
 
-## What I'll add
+## What to build
+A new authenticated route `/_authenticated/customer-portal/messages` with a full thread view and compose box, plus a link from the portal dashboard.
 
-Real photo uploads from your computer or phone, stored in Lovable Cloud, with a public URL automatically saved on the listing. One main photo per car (matches the current `image_url` field), admins-only access. The public `/cars-for-sale` page keeps working unchanged — it just reads `image_url` like today.
+### 1. Route file
+`src/routes/_authenticated/customer-portal.messages.tsx`
+- Loads all `customer_messages` for the current user, ordered ascending by `created_at` (RLS already scopes to `auth.uid()`).
+- Renders as a chat-style thread: admin messages left-aligned, customer messages right-aligned, with timestamps.
+- On mount, marks all `sender='admin'` unread rows as `read_by_customer = true` so the dashboard badge clears.
+- Compose box at bottom: textarea + Send button. Zod-validates (1–2000 chars, trimmed). Inserts a row with `sender='customer'`, `customer_id = auth user id`, `read_by_admin=false`.
+- Uses TanStack Query (`useQuery` for the thread, `useMutation` for send) with `invalidateQueries` on success.
+- Standard `errorComponent` + `notFoundComponent`.
+- `head()` with route-specific title.
 
-### 1. Storage bucket
+### 2. Dashboard entry point
+In `src/routes/_authenticated/customer-portal.tsx`:
+- Turn the existing "New Messages" stat card into a `<Link to="/customer-portal/messages">`.
+- Add a "Messages" section/CTA button so it's discoverable even when the count is 0.
 
-Create a public-read storage bucket `car-photos` with admin-only write/delete. Files keyed as `{carId-or-uuid}/{timestamp}-{filename}`.
+### 3. Verify RLS on `customer_messages`
+Confirm the existing 4 policies allow: customer SELECT own rows, customer INSERT own rows (with `sender='customer'` + `customer_id=auth.uid()`), customer UPDATE own rows (for `read_by_customer` flag). If any is missing, add a migration in the same turn. (Will check with `supabase--read_query` at build time before writing code.)
 
-### 2. Admin upload UI
+## Out of scope
+- Realtime subscriptions (can poll on window focus via Query's default; realtime can be a follow-up).
+- File attachments.
+- Admin-side changes — `/admin/messages` already handles replies.
 
-In `src/routes/_admin/admin.cars.tsx`, replace the "Image URL" text input with a drop zone + file picker that:
-- Accepts JPG / PNG / WebP, max ~8 MB
-- Shows a live preview after selection
-- On submit, uploads to `car-photos` via `supabase.storage`, gets the public URL, and saves it as `image_url` on the new listing
-- Lets you replace or remove the photo on existing listings (same upload control on each card)
-
-### 3. Cleanup
-
-When a listing is deleted or its photo is replaced, the old file is removed from the bucket so storage doesn't accumulate stale images.
-
-## Technical notes
-
-- Bucket: `storage.buckets` row with `public = true`; RLS on `storage.objects` — public `SELECT` for `bucket_id = 'car-photos'`, `INSERT`/`UPDATE`/`DELETE` gated by `has_role(auth.uid(), 'admin')`.
-- Upload happens client-side from the admin page using the existing `supabase` browser client (admin is authenticated, RLS enforces the role check).
-- Path convention: `car-photos/{listing_id_or_temp_uuid}/{Date.now()}-{sanitizedName}`.
-- File validation in the form before upload (MIME type + size). Toast on failure.
-- No schema change needed — we keep `cars_for_sale.image_url text` and just populate it with the storage public URL.
-
-## Out of scope (say the word if you want them)
-
-- Multiple photos / gallery per listing (would need a `car_images` table)
-- Image resizing/optimization
-- A separate "staff" role
+## Answer to your question
+Signup → profile → service history: **already integrated**. Customer → shop messaging: **half integrated** (schema + admin side done, customer send/read UI missing). This plan closes that gap.
