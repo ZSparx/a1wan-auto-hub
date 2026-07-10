@@ -144,7 +144,27 @@ function BookingsAdmin() {
                     </button>
                   )}
                   <button
+                    onClick={() => setQuoteFor(quoteFor === b.id ? null : b.id)}
+                    className="inline-flex items-center gap-2 border border-primary/50 bg-surface text-primary px-3 py-2 rounded-md text-sm font-display uppercase tracking-wide hover:bg-primary/10"
+                  >
+                    <FileText className="h-4 w-4" /> {quoteFor === b.id ? "Close" : "Quote & Invoice"}
+                  </button>
+                  <button
                     onClick={() => { if (confirm("Delete this booking?")) remove.mutate(b.id); }}
+                    className="inline-flex items-center gap-2 border border-border bg-background px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-destructive hover:border-destructive transition"
+                    aria-label="Delete"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+              {quoteFor === b.id && (
+                <QuoteInvoiceForm
+                  booking={b}
+                  onClose={() => setQuoteFor(null)}
+                  onCreated={() => { qc.invalidateQueries({ queryKey: ["admin-bookings"] }); setQuoteFor(null); }}
+                />
+              )}
                     className="inline-flex items-center gap-2 border border-border bg-background px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-destructive hover:border-destructive transition"
                     aria-label="Delete"
                   >
