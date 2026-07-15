@@ -62,13 +62,13 @@ export function Header() {
             <MessageSquare className="h-4 w-4" />
             Message Now
           </Link>
-          <button
-            type="button"
+          <Link
+            to="/settings"
             className="p-2 text-muted-foreground hover:text-foreground transition"
             aria-label="Settings"
           >
             <Settings className="h-5 w-5" />
-          </button>
+          </Link>
           {session ? (
             <>
               {isAdmin && (
