@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -37,6 +38,11 @@ import { Route as AdminAdminCustomersIdRouteImport } from './routes/_admin/admin
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AdminAdminRouteWithChildren
   '/customer-portal': typeof AuthenticatedCustomerPortalRouteWithChildren
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AdminAdminRouteWithChildren
   '/customer-portal': typeof AuthenticatedCustomerPortalRouteWithChildren
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/_admin/admin': typeof AdminAdminRouteWithChildren
   '/_authenticated/customer-portal': typeof AuthenticatedCustomerPortalRouteWithChildren
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/services'
+    | '/settings'
     | '/signup'
     | '/admin'
     | '/customer-portal'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/services'
+    | '/settings'
     | '/signup'
     | '/admin'
     | '/customer-portal'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/login'
     | '/services'
+    | '/settings'
     | '/signup'
     | '/_admin/admin'
     | '/_authenticated/customer-portal'
@@ -316,6 +328,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
   ServicesRoute: typeof ServicesRoute
+  SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   PayTokenRoute: typeof PayTokenRoute
   StatusTokenRoute: typeof StatusTokenRoute
@@ -328,6 +341,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -590,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
   ServicesRoute: ServicesRoute,
+  SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   PayTokenRoute: PayTokenRoute,
   StatusTokenRoute: StatusTokenRoute,
@@ -597,13 +618,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
