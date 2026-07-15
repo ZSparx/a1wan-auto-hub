@@ -94,7 +94,7 @@ function ContactPage() {
           <InfoCard icon={MapPin} title="Visit" lines={["2401 Fort Worth St", "Grand Prairie, TX 75050"]} />
           <InfoCard icon={Phone} title="Call" lines={[{ text: "(682) 718-5547", href: "tel:6827185547" }]} />
           <InfoCard icon={Mail} title="Email" lines={[{ text: "service@a1wanauto.com", href: "mailto:service@a1wanauto.com" }]} />
-          <InfoCard icon={Clock} title="Hours" lines={["Mon – Sat: 8am – 7pm", "Sun: Closed"]} />
+          <InfoCard icon={Clock} title="Hours" lines={["Mon – Sat: 9am – 6pm", "Sun: Closed"]} />
         </aside>
       </section>
     </div>

@@ -19,7 +19,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-muted-foreground">
             <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" /> 2401 Fort Worth St<br />Grand Prairie, TX 75050</li>
             <li className="flex gap-2"><Phone className="h-4 w-4 mt-0.5 text-primary shrink-0" /> <a href="tel:6827185547" className="hover:text-foreground">(682) 718-5547</a></li>
-            <li className="flex gap-2"><Clock className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Mon–Sat: 8am – 7pm<br />Sun: Closed</li>
+            <li className="flex gap-2"><Clock className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Mon–Sat: 9am – 6pm<br />Sun: Closed</li>
           </ul>
         </div>
 
