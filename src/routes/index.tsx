@@ -211,6 +211,28 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* Install app callout */}
+      <section className="pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Link
+          to="/install"
+          className="group flex flex-col sm:flex-row items-start sm:items-center gap-5 p-6 sm:p-8 rounded-2xl bg-surface border border-border hover:border-primary/60 transition"
+        >
+          <div className="h-14 w-14 rounded-xl bg-amber-gradient flex items-center justify-center shrink-0">
+            <Smartphone className="h-7 w-7 text-background" />
+          </div>
+          <div className="flex-1">
+            <p className="text-primary font-display uppercase tracking-widest text-xs mb-1">Get the app</p>
+            <h3 className="font-display uppercase tracking-wide text-xl">Add A1wan Auto to your phone's home screen</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              One-tap access to bookings, invoices, and messages — works on iPhone and Android, no app store needed.
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-2 font-display uppercase tracking-wider text-sm text-primary group-hover:translate-x-1 transition">
+            Install <ArrowRight className="h-4 w-4" />
+          </span>
+        </Link>
+      </section>
     </div>
   );
 }
