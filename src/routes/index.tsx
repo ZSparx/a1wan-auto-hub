@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-garage.jpg";
 import {
   Wrench, Disc, Gauge, CarFront, Cog, Snowflake,
-  Phone, MapPin, ArrowRight, Sparkles, ShieldCheck, Clock
+  Phone, MapPin, ArrowRight, Sparkles, ShieldCheck, Clock, Smartphone
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
