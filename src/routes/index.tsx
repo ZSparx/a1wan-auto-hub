@@ -204,7 +204,7 @@ function Home() {
                 <Clock className="h-6 w-6 text-primary shrink-0" />
                 <div>
                   <p className="font-display uppercase tracking-wide text-sm text-muted-foreground">Hours</p>
-                  <p className="text-foreground mt-1">Mon – Sat: 8am – 7pm<br />Sun: Closed</p>
+                  <p className="text-foreground mt-1">Mon – Sat: 9am – 6pm<br />Sun: Closed</p>
                 </div>
               </div>
             </div>
