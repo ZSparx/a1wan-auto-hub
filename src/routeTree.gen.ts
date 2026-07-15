@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InstallRouteImport } from './routes/install'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CarsForSaleRouteImport } from './routes/cars-for-sale'
 import { Route as BookRouteImport } from './routes/book'
@@ -53,6 +54,11 @@ const ServicesRoute = ServicesRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstallRoute = InstallRouteImport.update({
+  id: '/install',
+  path: '/install',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
+  '/install': typeof InstallRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
+  '/install': typeof InstallRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
+  '/install': typeof InstallRoute
   '/login': typeof LoginRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
@@ -246,6 +255,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/cars-for-sale'
     | '/contact'
+    | '/install'
     | '/login'
     | '/services'
     | '/settings'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/cars-for-sale'
     | '/contact'
+    | '/install'
     | '/login'
     | '/services'
     | '/settings'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/cars-for-sale'
     | '/contact'
+    | '/install'
     | '/login'
     | '/services'
     | '/settings'
@@ -326,6 +338,7 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   CarsForSaleRoute: typeof CarsForSaleRouteWithChildren
   ContactRoute: typeof ContactRoute
+  InstallRoute: typeof InstallRoute
   LoginRoute: typeof LoginRoute
   ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/install': {
+      id: '/install'
+      path: '/install'
+      fullPath: '/install'
+      preLoaderRoute: typeof InstallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -608,6 +628,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   CarsForSaleRoute: CarsForSaleRouteWithChildren,
   ContactRoute: ContactRoute,
+  InstallRoute: InstallRoute,
   LoginRoute: LoginRoute,
   ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
