@@ -191,14 +191,15 @@ function VehiclesPanel() {
   const submit = async () => {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) return;
-    const payload: Record<string, unknown> = { owner_id: auth.user.id };
-    if (form.year) payload.year = Number(form.year);
-    if (form.make) payload.make = form.make.trim();
-    if (form.model) payload.model = form.model.trim();
-    if (form.vin) payload.vin = form.vin.trim();
-    if (form.plate) payload.plate = form.plate.trim();
-    if (form.color) payload.color = form.color.trim();
-    const { error } = await supabase.from("vehicles").insert(payload);
+    const { error } = await supabase.from("vehicles").insert({
+      owner_id: auth.user.id,
+      year: form.year ? Number(form.year) : null,
+      make: form.make.trim() || null,
+      model: form.model.trim() || null,
+      vin: form.vin.trim() || null,
+      plate: form.plate.trim() || null,
+      color: form.color.trim() || null,
+    });
     if (error) return toast.error("Could not add vehicle");
     toast.success("Vehicle added");
     setForm({ year: "", make: "", model: "", vin: "", plate: "", color: "" });
