@@ -349,12 +349,12 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
 }
 
 function PreferencesPanel() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("light");
   const [channel, setChannel] = useState<"email" | "sms" | "both">("email");
   const [language, setLanguage] = useState("en");
 
   useEffect(() => {
-    const t = (localStorage.getItem("pref:theme") as "dark" | "light" | null) ?? "dark";
+    const t = (localStorage.getItem("pref:theme") as "dark" | "light" | null) ?? "light";
     setTheme(t);
     applyTheme(t);
     const c = localStorage.getItem("pref:channel");
