@@ -90,7 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="light">
       <head><HeadContent /></head>
       <body className="min-h-screen flex flex-col">
         {children}
@@ -123,7 +123,7 @@ function RootComponent() {
         <Outlet />
       </main>
       <Footer />
-      <Toaster theme="dark" position="top-right" richColors />
+      <Toaster theme="light" position="top-right" richColors />
     </QueryClientProvider>
   );
 }
