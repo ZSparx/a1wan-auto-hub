@@ -16,14 +16,16 @@ const navLinks = [
 export function Header() {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMechanic, setIsMechanic] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdmin = async (s: Session | null) => {
-      if (!s) { setIsAdmin(false); return; }
+      if (!s) { setIsAdmin(false); setIsMechanic(false); return; }
       const { data } = await supabase.from("user_roles").select("role").eq("user_id", s.user.id);
       setIsAdmin(!!data?.some((r) => r.role === "admin"));
+      setIsMechanic(!!data?.some((r) => r.role === "mechanic"));
     };
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => { setSession(s); checkAdmin(s); });
     supabase.auth.getSession().then(({ data }) => { setSession(data.session); checkAdmin(data.session); });
