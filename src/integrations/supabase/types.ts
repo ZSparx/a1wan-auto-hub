@@ -372,6 +372,7 @@ export type Database = {
           customer_phone: string | null
           description: string
           id: string
+          mechanic_id: string | null
           notes: string | null
           public_token: string
           status: Database["public"]["Enums"]["work_order_status"]
@@ -386,6 +387,7 @@ export type Database = {
           customer_phone?: string | null
           description: string
           id?: string
+          mechanic_id?: string | null
           notes?: string | null
           public_token?: string
           status?: Database["public"]["Enums"]["work_order_status"]
@@ -400,6 +402,7 @@ export type Database = {
           customer_phone?: string | null
           description?: string
           id?: string
+          mechanic_id?: string | null
           notes?: string | null
           public_token?: string
           status?: Database["public"]["Enums"]["work_order_status"]
@@ -431,7 +434,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "customer"
+      app_role: "admin" | "customer" | "mechanic"
       booking_status:
         | "requested"
         | "scheduled"
@@ -568,7 +571,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "customer"],
+      app_role: ["admin", "customer", "mechanic"],
       booking_status: [
         "requested",
         "scheduled",
