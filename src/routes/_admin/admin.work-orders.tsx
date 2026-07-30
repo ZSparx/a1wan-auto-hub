@@ -96,6 +96,16 @@ function WorkOrdersAdmin() {
                   >
                     {STATUSES.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
                   </select>
+                  <select
+                    value={w.mechanic_id ?? ""}
+                    onChange={(e) => update.mutate({ id: w.id, patch: { mechanic_id: e.target.value || null } })}
+                    className="rounded-md bg-background border border-border px-3 py-2 text-sm"
+                  >
+                    <option value="">Unassigned</option>
+                    {(mechanics ?? []).map((m) => (
+                      <option key={m.id} value={m.id}>{m.full_name ?? m.email}</option>
+                    ))}
+                  </select>
                   <a href={`/status/${w.public_token}`} target="_blank" rel="noreferrer" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
                     Customer link <ExternalLink className="h-3 w-3" />
                   </a>
