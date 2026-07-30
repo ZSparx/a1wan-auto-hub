@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  LayoutDashboard, Wrench, FileText, MessageSquare, Car, BarChart3, CalendarClock, Users,
+  LayoutDashboard, Wrench, FileText, MessageSquare, Car, BarChart3, CalendarClock, Users, UserPlus,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin")({
@@ -26,6 +26,7 @@ const links: { to: string; label: string; icon: React.ElementType; exact?: boole
   { to: "/admin/bookings", label: "Bookings", icon: CalendarClock },
   { to: "/admin/work-orders", label: "Work Orders", icon: Wrench },
   { to: "/admin/customers", label: "Customers", icon: Users },
+  { to: "/admin/accounts", label: "Accounts", icon: UserPlus },
   { to: "/admin/invoices", label: "Invoices", icon: FileText },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/cars", label: "Cars", icon: Car },
