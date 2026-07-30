@@ -96,6 +96,16 @@ function CustomersAdmin() {
                       </p>
                     )}
                   </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {(data.vehicleMap.get(c.id) ?? []).map((v, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                        <CarIcon className="h-3 w-3" /> {v}
+                      </span>
+                    ))}
+                    {!(data.vehicleMap.get(c.id) ?? []).length && (
+                      <span className="text-[11px] text-muted-foreground">No vehicles registered</span>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     Joined {new Date(c.created_at).toLocaleDateString()}
                   </p>
