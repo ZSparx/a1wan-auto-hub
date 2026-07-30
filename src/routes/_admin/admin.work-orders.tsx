@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wrench, Plus, ExternalLink, Trash2 } from "lucide-react";
+import { listMechanics } from "@/lib/roles.functions";
 
 export const Route = createFileRoute("/_admin/admin/work-orders")({
   head: () => ({ meta: [{ title: "Work Orders — Admin" }] }),
@@ -22,8 +23,10 @@ function WorkOrdersAdmin() {
     queryFn: async () => (await supabase.from("work_orders").select("*").order("created_at", { ascending: false })).data ?? [],
   });
 
+  const { data: mechanics } = useQuery({ queryKey: ["mechanics"], queryFn: () => listMechanics() });
+
   const update = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: { status?: string; notes?: string } }) => {
+    mutationFn: async ({ id, patch }: { id: string; patch: { status?: string; notes?: string; mechanic_id?: string | null } }) => {
       const { error } = await supabase.from("work_orders").update(patch as never).eq("id", id);
       if (error) throw error;
     },
@@ -92,6 +95,16 @@ function WorkOrdersAdmin() {
                     className="rounded-md bg-background border border-border px-3 py-2 text-sm"
                   >
                     {STATUSES.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
+                  </select>
+                  <select
+                    value={w.mechanic_id ?? ""}
+                    onChange={(e) => update.mutate({ id: w.id, patch: { mechanic_id: e.target.value || null } })}
+                    className="rounded-md bg-background border border-border px-3 py-2 text-sm"
+                  >
+                    <option value="">Unassigned</option>
+                    {(mechanics ?? []).map((m) => (
+                      <option key={m.id} value={m.id}>{m.full_name ?? m.email}</option>
+                    ))}
                   </select>
                   <a href={`/status/${w.public_token}`} target="_blank" rel="noreferrer" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
                     Customer link <ExternalLink className="h-3 w-3" />

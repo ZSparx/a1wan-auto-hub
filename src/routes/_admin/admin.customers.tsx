@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Mail, Phone, FileText, ChevronRight, MessageSquare } from "lucide-react";
+import { Users, Mail, Phone, FileText, ChevronRight, MessageSquare, Car as CarIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/customers")({
   head: () => ({ meta: [{ title: "Customers — Admin" }] }),
@@ -12,7 +12,7 @@ function CustomersAdmin() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-customers"],
     queryFn: async () => {
-      const [profilesRes, rolesRes, invoicesRes, unreadRes] = await Promise.all([
+      const [profilesRes, rolesRes, invoicesRes, unreadRes, vehiclesRes] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("user_id, role"),
         supabase.from("invoices").select("customer_id, total_cents, status"),
@@ -21,11 +21,14 @@ function CustomersAdmin() {
           .select("customer_id")
           .eq("sender", "customer")
           .eq("read_by_admin", false),
+        supabase.from("vehicles").select("*").order("created_at", { ascending: false }),
       ]);
-      const adminIds = new Set(
-        (rolesRes.data ?? []).filter((r) => r.role === "admin").map((r) => r.user_id),
+      const excludedIds = new Set(
+        (rolesRes.data ?? [])
+          .filter((r) => r.role === "admin" || r.role === "mechanic")
+          .map((r) => r.user_id),
       );
-      const customers = (profilesRes.data ?? []).filter((p) => !adminIds.has(p.id));
+      const customers = (profilesRes.data ?? []).filter((p) => !excludedIds.has(p.id));
       const invoiceMap = new Map<string, { count: number; unpaid: number; paid: number }>();
       for (const inv of invoicesRes.data ?? []) {
         if (!inv.customer_id) continue;
@@ -39,7 +42,12 @@ function CustomersAdmin() {
       for (const r of unreadRes.data ?? []) {
         unreadMap.set(r.customer_id, (unreadMap.get(r.customer_id) ?? 0) + 1);
       }
-      return { customers, invoiceMap, unreadMap };
+      const vehicleMap = new Map<string, string[]>();
+      for (const v of vehiclesRes.data ?? []) {
+        const label = [v.year, v.make, v.model].filter(Boolean).join(" ") || v.plate || v.vin || "Vehicle";
+        vehicleMap.set(v.owner_id, [...(vehicleMap.get(v.owner_id) ?? []), label]);
+      }
+      return { customers, invoiceMap, unreadMap, vehicleMap };
     },
   });
 
@@ -86,6 +94,16 @@ function CustomersAdmin() {
                       <p className="inline-flex items-center gap-1.5">
                         <Phone className="h-3.5 w-3.5" /> {c.phone}
                       </p>
+                    )}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {(data.vehicleMap.get(c.id) ?? []).map((v, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                        <CarIcon className="h-3 w-3" /> {v}
+                      </span>
+                    ))}
+                    {!(data.vehicleMap.get(c.id) ?? []).length && (
+                      <span className="text-[11px] text-muted-foreground">No vehicles registered</span>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
