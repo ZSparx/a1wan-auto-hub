@@ -165,8 +165,8 @@ export function Header() {
                     Admin Dashboard
                   </Link>
                 )}
-                <Link to={isAdmin ? "/portal" : "/customer-portal"} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
-                  {isAdmin ? "My Portal" : "Customer Portal"}
+                <Link to={isAdmin ? "/portal" : isMechanic ? "/mechanic" : "/customer-portal"} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
+                  {isAdmin ? "My Portal" : isMechanic ? "My Jobs" : "Customer Portal"}
                 </Link>
                 <button onClick={handleSignOut} className="px-3 py-3 text-left text-sm text-muted-foreground hover:text-foreground">
                   Sign out
