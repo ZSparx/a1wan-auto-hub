@@ -81,8 +81,16 @@ export function Header() {
                   <ShieldCheck className="h-4 w-4" /> Admin
                 </Link>
               )}
+              {isMechanic && !isAdmin && (
+                <Link
+                  to="/mechanic"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-display uppercase tracking-wider bg-primary/15 text-primary border border-primary/40 hover:bg-primary/25 transition"
+                >
+                  <ShieldCheck className="h-4 w-4" /> My Jobs
+                </Link>
+              )}
               <Link
-                to={isAdmin ? "/portal" : "/customer-portal"}
+                to={isAdmin ? "/portal" : isMechanic ? "/mechanic" : "/customer-portal"}
                 className="p-2 text-muted-foreground hover:text-foreground transition"
                 aria-label={isAdmin ? "Admin" : "Customer portal"}
               >
