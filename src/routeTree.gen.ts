@@ -33,6 +33,7 @@ import { Route as AdminAdminWorkOrdersRouteImport } from './routes/_admin/admin.
 import { Route as AdminAdminReportsRouteImport } from './routes/_admin/admin.reports'
 import { Route as AdminAdminMessagesRouteImport } from './routes/_admin/admin.messages'
 import { Route as AdminAdminInvoicesRouteImport } from './routes/_admin/admin.invoices'
+import { Route as AdminAdminCustomersRouteImport } from './routes/_admin/admin.customers'
 import { Route as AdminAdminCarsRouteImport } from './routes/_admin/admin.cars'
 import { Route as AdminAdminBookingsRouteImport } from './routes/_admin/admin.bookings'
 import { Route as AdminAdminAccountsRouteImport } from './routes/_admin/admin.accounts'
@@ -159,6 +160,11 @@ const AdminAdminInvoicesRoute = AdminAdminInvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminCustomersRoute = AdminAdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminCarsRoute = AdminAdminCarsRouteImport.update({
   id: '/cars',
   path: '/cars',
@@ -176,14 +182,14 @@ const AdminAdminAccountsRoute = AdminAdminAccountsRouteImport.update({
 } as any)
 const AdminAdminCustomersIndexRoute =
   AdminAdminCustomersIndexRouteImport.update({
-    id: '/customers/',
-    path: '/customers/',
-    getParentRoute: () => AdminAdminRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminAdminCustomersRoute,
   } as any)
 const AdminAdminCustomersIdRoute = AdminAdminCustomersIdRouteImport.update({
-  id: '/customers/$id',
-  path: '/customers/$id',
-  getParentRoute: () => AdminAdminRoute,
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminAdminCustomersRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/admin/accounts': typeof AdminAdminAccountsRoute
   '/admin/bookings': typeof AdminAdminBookingsRoute
   '/admin/cars': typeof AdminAdminCarsRoute
+  '/admin/customers': typeof AdminAdminCustomersRouteWithChildren
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
@@ -265,6 +272,7 @@ export interface FileRoutesById {
   '/_admin/admin/accounts': typeof AdminAdminAccountsRoute
   '/_admin/admin/bookings': typeof AdminAdminBookingsRoute
   '/_admin/admin/cars': typeof AdminAdminCarsRoute
+  '/_admin/admin/customers': typeof AdminAdminCustomersRouteWithChildren
   '/_admin/admin/invoices': typeof AdminAdminInvoicesRoute
   '/_admin/admin/messages': typeof AdminAdminMessagesRoute
   '/_admin/admin/reports': typeof AdminAdminReportsRoute
@@ -296,6 +304,7 @@ export interface FileRouteTypes {
     | '/admin/accounts'
     | '/admin/bookings'
     | '/admin/cars'
+    | '/admin/customers'
     | '/admin/invoices'
     | '/admin/messages'
     | '/admin/reports'
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/accounts'
     | '/_admin/admin/bookings'
     | '/_admin/admin/cars'
+    | '/_admin/admin/customers'
     | '/_admin/admin/invoices'
     | '/_admin/admin/messages'
     | '/_admin/admin/reports'
@@ -553,6 +563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminInvoicesRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/_admin/admin/customers': {
+      id: '/_admin/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminAdminCustomersRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_admin/admin/cars': {
       id: '/_admin/admin/cars'
       path: '/cars'
@@ -576,45 +593,56 @@ declare module '@tanstack/react-router' {
     }
     '/_admin/admin/customers/': {
       id: '/_admin/admin/customers/'
-      path: '/customers'
+      path: '/'
       fullPath: '/admin/customers/'
       preLoaderRoute: typeof AdminAdminCustomersIndexRouteImport
-      parentRoute: typeof AdminAdminRoute
+      parentRoute: typeof AdminAdminCustomersRoute
     }
     '/_admin/admin/customers/$id': {
       id: '/_admin/admin/customers/$id'
-      path: '/customers/$id'
+      path: '/$id'
       fullPath: '/admin/customers/$id'
       preLoaderRoute: typeof AdminAdminCustomersIdRouteImport
-      parentRoute: typeof AdminAdminRoute
+      parentRoute: typeof AdminAdminCustomersRoute
     }
   }
 }
+
+interface AdminAdminCustomersRouteChildren {
+  AdminAdminCustomersIdRoute: typeof AdminAdminCustomersIdRoute
+  AdminAdminCustomersIndexRoute: typeof AdminAdminCustomersIndexRoute
+}
+
+const AdminAdminCustomersRouteChildren: AdminAdminCustomersRouteChildren = {
+  AdminAdminCustomersIdRoute: AdminAdminCustomersIdRoute,
+  AdminAdminCustomersIndexRoute: AdminAdminCustomersIndexRoute,
+}
+
+const AdminAdminCustomersRouteWithChildren =
+  AdminAdminCustomersRoute._addFileChildren(AdminAdminCustomersRouteChildren)
 
 interface AdminAdminRouteChildren {
   AdminAdminAccountsRoute: typeof AdminAdminAccountsRoute
   AdminAdminBookingsRoute: typeof AdminAdminBookingsRoute
   AdminAdminCarsRoute: typeof AdminAdminCarsRoute
+  AdminAdminCustomersRoute: typeof AdminAdminCustomersRouteWithChildren
   AdminAdminInvoicesRoute: typeof AdminAdminInvoicesRoute
   AdminAdminMessagesRoute: typeof AdminAdminMessagesRoute
   AdminAdminReportsRoute: typeof AdminAdminReportsRoute
   AdminAdminWorkOrdersRoute: typeof AdminAdminWorkOrdersRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
-  AdminAdminCustomersIdRoute: typeof AdminAdminCustomersIdRoute
-  AdminAdminCustomersIndexRoute: typeof AdminAdminCustomersIndexRoute
 }
 
 const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminAccountsRoute: AdminAdminAccountsRoute,
   AdminAdminBookingsRoute: AdminAdminBookingsRoute,
   AdminAdminCarsRoute: AdminAdminCarsRoute,
+  AdminAdminCustomersRoute: AdminAdminCustomersRouteWithChildren,
   AdminAdminInvoicesRoute: AdminAdminInvoicesRoute,
   AdminAdminMessagesRoute: AdminAdminMessagesRoute,
   AdminAdminReportsRoute: AdminAdminReportsRoute,
   AdminAdminWorkOrdersRoute: AdminAdminWorkOrdersRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
-  AdminAdminCustomersIdRoute: AdminAdminCustomersIdRoute,
-  AdminAdminCustomersIndexRoute: AdminAdminCustomersIndexRoute,
 }
 
 const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
