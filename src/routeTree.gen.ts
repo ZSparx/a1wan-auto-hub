@@ -25,6 +25,7 @@ import { Route as PayTokenRouteImport } from './routes/pay.$token'
 import { Route as CarsForSaleIdRouteImport } from './routes/cars-for-sale.$id'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedMechanicRouteImport } from './routes/_authenticated/mechanic'
+import { Route as AuthenticatedCustomerPortalRouteImport } from './routes/_authenticated/customer-portal'
 import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
 import { Route as AuthenticatedCustomerPortalIndexRouteImport } from './routes/_authenticated/customer-portal.index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
@@ -118,6 +119,12 @@ const AuthenticatedMechanicRoute = AuthenticatedMechanicRouteImport.update({
   path: '/mechanic',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCustomerPortalRoute =
+  AuthenticatedCustomerPortalRouteImport.update({
+    id: '/customer-portal',
+    path: '/customer-portal',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AdminAdminRoute = AdminAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -125,9 +132,9 @@ const AdminAdminRoute = AdminAdminRouteImport.update({
 } as any)
 const AuthenticatedCustomerPortalIndexRoute =
   AuthenticatedCustomerPortalIndexRouteImport.update({
-    id: '/customer-portal/',
-    path: '/customer-portal/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCustomerPortalRoute,
   } as any)
 const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   id: '/',
@@ -136,9 +143,9 @@ const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
 } as any)
 const AuthenticatedCustomerPortalMessagesRoute =
   AuthenticatedCustomerPortalMessagesRouteImport.update({
-    id: '/customer-portal/messages',
-    path: '/customer-portal/messages',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => AuthenticatedCustomerPortalRoute,
   } as any)
 const AdminAdminWorkOrdersRoute = AdminAdminWorkOrdersRouteImport.update({
   id: '/work-orders',
@@ -202,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AdminAdminRouteWithChildren
+  '/customer-portal': typeof AuthenticatedCustomerPortalRouteWithChildren
   '/mechanic': typeof AuthenticatedMechanicRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
@@ -263,6 +271,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/_admin/admin': typeof AdminAdminRouteWithChildren
+  '/_authenticated/customer-portal': typeof AuthenticatedCustomerPortalRouteWithChildren
   '/_authenticated/mechanic': typeof AuthenticatedMechanicRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/cars-for-sale/$id': typeof CarsForSaleIdRoute
@@ -295,6 +304,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/admin'
+    | '/customer-portal'
     | '/mechanic'
     | '/portal'
     | '/cars-for-sale/$id'
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/_admin/admin'
+    | '/_authenticated/customer-portal'
     | '/_authenticated/mechanic'
     | '/_authenticated/portal'
     | '/cars-for-sale/$id'
@@ -507,6 +518,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMechanicRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/customer-portal': {
+      id: '/_authenticated/customer-portal'
+      path: '/customer-portal'
+      fullPath: '/customer-portal'
+      preLoaderRoute: typeof AuthenticatedCustomerPortalRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_admin/admin': {
       id: '/_admin/admin'
       path: '/admin'
@@ -516,10 +534,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/customer-portal/': {
       id: '/_authenticated/customer-portal/'
-      path: '/customer-portal'
+      path: '/'
       fullPath: '/customer-portal/'
       preLoaderRoute: typeof AuthenticatedCustomerPortalIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedCustomerPortalRoute
     }
     '/_admin/admin/': {
       id: '/_admin/admin/'
@@ -530,10 +548,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/customer-portal/messages': {
       id: '/_authenticated/customer-portal/messages'
-      path: '/customer-portal/messages'
+      path: '/messages'
       fullPath: '/customer-portal/messages'
       preLoaderRoute: typeof AuthenticatedCustomerPortalMessagesRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedCustomerPortalRoute
     }
     '/_admin/admin/work-orders': {
       id: '/_admin/admin/work-orders'
@@ -659,19 +677,35 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedMechanicRoute: typeof AuthenticatedMechanicRoute
-  AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+interface AuthenticatedCustomerPortalRouteChildren {
   AuthenticatedCustomerPortalMessagesRoute: typeof AuthenticatedCustomerPortalMessagesRoute
   AuthenticatedCustomerPortalIndexRoute: typeof AuthenticatedCustomerPortalIndexRoute
 }
 
+const AuthenticatedCustomerPortalRouteChildren: AuthenticatedCustomerPortalRouteChildren =
+  {
+    AuthenticatedCustomerPortalMessagesRoute:
+      AuthenticatedCustomerPortalMessagesRoute,
+    AuthenticatedCustomerPortalIndexRoute:
+      AuthenticatedCustomerPortalIndexRoute,
+  }
+
+const AuthenticatedCustomerPortalRouteWithChildren =
+  AuthenticatedCustomerPortalRoute._addFileChildren(
+    AuthenticatedCustomerPortalRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedCustomerPortalRoute: typeof AuthenticatedCustomerPortalRouteWithChildren
+  AuthenticatedMechanicRoute: typeof AuthenticatedMechanicRoute
+  AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+}
+
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCustomerPortalRoute:
+    AuthenticatedCustomerPortalRouteWithChildren,
   AuthenticatedMechanicRoute: AuthenticatedMechanicRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
-  AuthenticatedCustomerPortalMessagesRoute:
-    AuthenticatedCustomerPortalMessagesRoute,
-  AuthenticatedCustomerPortalIndexRoute: AuthenticatedCustomerPortalIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
