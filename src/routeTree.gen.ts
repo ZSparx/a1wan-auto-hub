@@ -27,6 +27,7 @@ import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedMechanicRouteImport } from './routes/_authenticated/mechanic'
 import { Route as AuthenticatedCustomerPortalRouteImport } from './routes/_authenticated/customer-portal'
 import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as AuthenticatedCustomerPortalMessagesRouteImport } from './routes/_authenticated/customer-portal.messages'
 import { Route as AdminAdminWorkOrdersRouteImport } from './routes/_admin/admin.work-orders'
 import { Route as AdminAdminReportsRouteImport } from './routes/_admin/admin.reports'
@@ -127,6 +128,11 @@ const AdminAdminRoute = AdminAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AuthenticatedCustomerPortalMessagesRoute =
   AuthenticatedCustomerPortalMessagesRouteImport.update({
     id: '/messages',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/admin/reports': typeof AdminAdminReportsRoute
   '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
   '/customer-portal/messages': typeof AuthenticatedCustomerPortalMessagesRoute
+  '/admin/': typeof AdminAdminIndexRoute
   '/admin/customers/$id': typeof AdminAdminCustomersIdRoute
 }
 export interface FileRoutesByTo {
@@ -217,7 +224,6 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
-  '/admin': typeof AdminAdminRouteWithChildren
   '/customer-portal': typeof AuthenticatedCustomerPortalRouteWithChildren
   '/mechanic': typeof AuthenticatedMechanicRoute
   '/portal': typeof AuthenticatedPortalRoute
@@ -233,6 +239,7 @@ export interface FileRoutesByTo {
   '/admin/reports': typeof AdminAdminReportsRoute
   '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
   '/customer-portal/messages': typeof AuthenticatedCustomerPortalMessagesRoute
+  '/admin': typeof AdminAdminIndexRoute
   '/admin/customers/$id': typeof AdminAdminCustomersIdRoute
 }
 export interface FileRoutesById {
@@ -264,6 +271,7 @@ export interface FileRoutesById {
   '/_admin/admin/reports': typeof AdminAdminReportsRoute
   '/_admin/admin/work-orders': typeof AdminAdminWorkOrdersRoute
   '/_authenticated/customer-portal/messages': typeof AuthenticatedCustomerPortalMessagesRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_admin/admin/customers/$id': typeof AdminAdminCustomersIdRoute
 }
 export interface FileRouteTypes {
@@ -294,6 +302,7 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/work-orders'
     | '/customer-portal/messages'
+    | '/admin/'
     | '/admin/customers/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -306,7 +315,6 @@ export interface FileRouteTypes {
     | '/services'
     | '/settings'
     | '/signup'
-    | '/admin'
     | '/customer-portal'
     | '/mechanic'
     | '/portal'
@@ -322,6 +330,7 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/work-orders'
     | '/customer-portal/messages'
+    | '/admin'
     | '/admin/customers/$id'
   id:
     | '__root__'
@@ -352,6 +361,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/reports'
     | '/_admin/admin/work-orders'
     | '/_authenticated/customer-portal/messages'
+    | '/_admin/admin/'
     | '/_admin/admin/customers/$id'
   fileRoutesById: FileRoutesById
 }
@@ -499,6 +509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_authenticated/customer-portal/messages': {
       id: '/_authenticated/customer-portal/messages'
       path: '/messages'
@@ -592,6 +609,7 @@ interface AdminAdminRouteChildren {
   AdminAdminMessagesRoute: typeof AdminAdminMessagesRoute
   AdminAdminReportsRoute: typeof AdminAdminReportsRoute
   AdminAdminWorkOrdersRoute: typeof AdminAdminWorkOrdersRoute
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminAdminRouteChildren: AdminAdminRouteChildren = {
@@ -603,6 +621,7 @@ const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminMessagesRoute: AdminAdminMessagesRoute,
   AdminAdminReportsRoute: AdminAdminReportsRoute,
   AdminAdminWorkOrdersRoute: AdminAdminWorkOrdersRoute,
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
 
 const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
