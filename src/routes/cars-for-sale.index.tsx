@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gauge } from "lucide-react";
 
-export const Route = createFileRoute("/cars-for-sale")({
+export const Route = createFileRoute("/cars-for-sale/")({
   head: () => ({
     meta: [
       { title: "Cars for Sale — A1wan Auto · Grand Prairie, TX" },
