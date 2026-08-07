@@ -15,6 +15,7 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InstallRouteImport } from './routes/install'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CarsForSaleRouteImport } from './routes/cars-for-sale'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AdminRouteImport } from './routes/_admin'
@@ -71,6 +72,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarsForSaleRoute = CarsForSaleRouteImport.update({
+  id: '/cars-for-sale',
+  path: '/cars-for-sale',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
@@ -90,9 +96,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarsForSaleIndexRoute = CarsForSaleIndexRouteImport.update({
-  id: '/cars-for-sale/',
-  path: '/cars-for-sale/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => CarsForSaleRoute,
 } as any)
 const StatusTokenRoute = StatusTokenRouteImport.update({
   id: '/status/$token',
@@ -105,9 +111,9 @@ const PayTokenRoute = PayTokenRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarsForSaleIdRoute = CarsForSaleIdRouteImport.update({
-  id: '/cars-for-sale/$id',
-  path: '/cars-for-sale/$id',
-  getParentRoute: () => rootRouteImport,
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CarsForSaleRoute,
 } as any)
 const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   id: '/portal',
@@ -202,6 +208,7 @@ const AdminAdminCustomersIdRoute = AdminAdminCustomersIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/book': typeof BookRoute
+  '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
   '/install': typeof InstallRoute
   '/login': typeof LoginRoute
@@ -264,6 +271,7 @@ export interface FileRoutesById {
   '/_admin': typeof AdminRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/book': typeof BookRoute
+  '/cars-for-sale': typeof CarsForSaleRouteWithChildren
   '/contact': typeof ContactRoute
   '/install': typeof InstallRoute
   '/login': typeof LoginRoute
@@ -297,6 +305,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/book'
+    | '/cars-for-sale'
     | '/contact'
     | '/install'
     | '/login'
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/_admin'
     | '/_authenticated'
     | '/book'
+    | '/cars-for-sale'
     | '/contact'
     | '/install'
     | '/login'
@@ -392,16 +402,15 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   BookRoute: typeof BookRoute
+  CarsForSaleRoute: typeof CarsForSaleRouteWithChildren
   ContactRoute: typeof ContactRoute
   InstallRoute: typeof InstallRoute
   LoginRoute: typeof LoginRoute
   ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
-  CarsForSaleIdRoute: typeof CarsForSaleIdRoute
   PayTokenRoute: typeof PayTokenRoute
   StatusTokenRoute: typeof StatusTokenRoute
-  CarsForSaleIndexRoute: typeof CarsForSaleIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -448,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cars-for-sale': {
+      id: '/cars-for-sale'
+      path: '/cars-for-sale'
+      fullPath: '/cars-for-sale'
+      preLoaderRoute: typeof CarsForSaleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/book': {
       id: '/book'
       path: '/book'
@@ -478,10 +494,10 @@ declare module '@tanstack/react-router' {
     }
     '/cars-for-sale/': {
       id: '/cars-for-sale/'
-      path: '/cars-for-sale'
+      path: '/'
       fullPath: '/cars-for-sale/'
       preLoaderRoute: typeof CarsForSaleIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CarsForSaleRoute
     }
     '/status/$token': {
       id: '/status/$token'
@@ -499,10 +515,10 @@ declare module '@tanstack/react-router' {
     }
     '/cars-for-sale/$id': {
       id: '/cars-for-sale/$id'
-      path: '/cars-for-sale/$id'
+      path: '/$id'
       fullPath: '/cars-for-sale/$id'
       preLoaderRoute: typeof CarsForSaleIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CarsForSaleRoute
     }
     '/_authenticated/portal': {
       id: '/_authenticated/portal'
@@ -712,22 +728,45 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface CarsForSaleRouteChildren {
+  CarsForSaleIdRoute: typeof CarsForSaleIdRoute
+  CarsForSaleIndexRoute: typeof CarsForSaleIndexRoute
+}
+
+const CarsForSaleRouteChildren: CarsForSaleRouteChildren = {
+  CarsForSaleIdRoute: CarsForSaleIdRoute,
+  CarsForSaleIndexRoute: CarsForSaleIndexRoute,
+}
+
+const CarsForSaleRouteWithChildren = CarsForSaleRoute._addFileChildren(
+  CarsForSaleRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   BookRoute: BookRoute,
+  CarsForSaleRoute: CarsForSaleRouteWithChildren,
   ContactRoute: ContactRoute,
   InstallRoute: InstallRoute,
   LoginRoute: LoginRoute,
   ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
-  CarsForSaleIdRoute: CarsForSaleIdRoute,
   PayTokenRoute: PayTokenRoute,
   StatusTokenRoute: StatusTokenRoute,
-  CarsForSaleIndexRoute: CarsForSaleIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
