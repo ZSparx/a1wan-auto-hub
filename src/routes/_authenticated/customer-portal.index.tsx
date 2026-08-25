@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Wrench, FileText, ExternalLink, MessageSquare } from "lucide-react";
+import { GOOGLE_REVIEW_URL } from "@/lib/config";
+import { Car, Wrench, FileText, ExternalLink, MessageSquare, Star } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/customer-portal/")({
   head: () => ({ meta: [{ title: "Customer Portal — A1wan Auto" }] }),
@@ -55,7 +56,10 @@ function CustomerPortal() {
   });
 
   const unpaid = invoices?.filter((i) => i.status === "sent") ?? [];
+  const paid = invoices?.filter((i) => i.status === "paid") ?? [];
   const active = workOrders?.filter((w) => w.status !== "completed") ?? [];
+  const completed = workOrders?.filter((w) => w.status === "completed") ?? [];
+  const showReview = paid.length > 0 || completed.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -83,6 +87,25 @@ function CustomerPortal() {
           <MessageSquare className="h-4 w-4" /> Message the shop
         </Link>
       </div>
+
+      {showReview && (
+        <section className="mb-10 p-6 rounded-lg bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/30">
+          <h2 className="font-display uppercase tracking-wide text-xl flex items-center gap-2">
+            <Star className="h-5 w-5 text-emerald-400" /> How did we do?
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Thanks for trusting A1wan Auto with your vehicle. A quick Google review helps other drivers find us.
+          </p>
+          <a
+            href={GOOGLE_REVIEW_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-flex items-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 font-display uppercase tracking-wider font-semibold px-6 py-3 rounded-md transition"
+          >
+            Leave a Google review <ExternalLink className="h-4 w-4" />
+          </a>
+        </section>
+      )}
 
       <Section title="Active Work Orders">
         {active.length === 0 ? (
