@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Phone, Clock } from "lucide-react";
+import { MapPin, Phone, Clock, Star } from "lucide-react";
 import { Logo } from "./Logo";
+import { GOOGLE_REVIEW_URL } from "@/lib/config";
 
 export function Footer() {
   return (
@@ -30,7 +31,11 @@ export function Footer() {
             <li><Link to="/cars-for-sale" className="text-muted-foreground hover:text-primary">Cars for Sale</Link></li>
             <li><Link to="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
             <li><Link to="/customer-portal" className="text-muted-foreground hover:text-primary">Customer Portal</Link></li>
-            
+            <li>
+              <a href={GOOGLE_REVIEW_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary">
+                <Star className="h-3.5 w-3.5" /> Review us on Google
+              </a>
+            </li>
           </ul>
         </div>
       </div>
