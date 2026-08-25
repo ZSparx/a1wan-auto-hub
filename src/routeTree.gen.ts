@@ -32,6 +32,7 @@ import { Route as AuthenticatedCustomerPortalIndexRouteImport } from './routes/_
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as AuthenticatedCustomerPortalMessagesRouteImport } from './routes/_authenticated/customer-portal.messages'
 import { Route as AdminAdminWorkOrdersRouteImport } from './routes/_admin/admin.work-orders'
+import { Route as AdminAdminReviewsRouteImport } from './routes/_admin/admin.reviews'
 import { Route as AdminAdminReportsRouteImport } from './routes/_admin/admin.reports'
 import { Route as AdminAdminMessagesRouteImport } from './routes/_admin/admin.messages'
 import { Route as AdminAdminInvoicesRouteImport } from './routes/_admin/admin.invoices'
@@ -158,6 +159,11 @@ const AdminAdminWorkOrdersRoute = AdminAdminWorkOrdersRouteImport.update({
   path: '/work-orders',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminReviewsRoute = AdminAdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminReportsRoute = AdminAdminReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/reviews': typeof AdminAdminReviewsRoute
   '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
   '/customer-portal/messages': typeof AuthenticatedCustomerPortalMessagesRoute
   '/admin/': typeof AdminAdminIndexRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/admin/invoices': typeof AdminAdminInvoicesRoute
   '/admin/messages': typeof AdminAdminMessagesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/reviews': typeof AdminAdminReviewsRoute
   '/admin/work-orders': typeof AdminAdminWorkOrdersRoute
   '/customer-portal/messages': typeof AuthenticatedCustomerPortalMessagesRoute
   '/admin': typeof AdminAdminIndexRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/_admin/admin/invoices': typeof AdminAdminInvoicesRoute
   '/_admin/admin/messages': typeof AdminAdminMessagesRoute
   '/_admin/admin/reports': typeof AdminAdminReportsRoute
+  '/_admin/admin/reviews': typeof AdminAdminReviewsRoute
   '/_admin/admin/work-orders': typeof AdminAdminWorkOrdersRoute
   '/_authenticated/customer-portal/messages': typeof AuthenticatedCustomerPortalMessagesRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/admin/invoices'
     | '/admin/messages'
     | '/admin/reports'
+    | '/admin/reviews'
     | '/admin/work-orders'
     | '/customer-portal/messages'
     | '/admin/'
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/admin/invoices'
     | '/admin/messages'
     | '/admin/reports'
+    | '/admin/reviews'
     | '/admin/work-orders'
     | '/customer-portal/messages'
     | '/admin'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/invoices'
     | '/_admin/admin/messages'
     | '/_admin/admin/reports'
+    | '/_admin/admin/reviews'
     | '/_admin/admin/work-orders'
     | '/_authenticated/customer-portal/messages'
     | '/_admin/admin/'
@@ -576,6 +588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminWorkOrdersRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/_admin/admin/reviews': {
+      id: '/_admin/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminAdminReviewsRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_admin/admin/reports': {
       id: '/_admin/admin/reports'
       path: '/reports'
@@ -663,6 +682,7 @@ interface AdminAdminRouteChildren {
   AdminAdminInvoicesRoute: typeof AdminAdminInvoicesRoute
   AdminAdminMessagesRoute: typeof AdminAdminMessagesRoute
   AdminAdminReportsRoute: typeof AdminAdminReportsRoute
+  AdminAdminReviewsRoute: typeof AdminAdminReviewsRoute
   AdminAdminWorkOrdersRoute: typeof AdminAdminWorkOrdersRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
@@ -675,6 +695,7 @@ const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminInvoicesRoute: AdminAdminInvoicesRoute,
   AdminAdminMessagesRoute: AdminAdminMessagesRoute,
   AdminAdminReportsRoute: AdminAdminReportsRoute,
+  AdminAdminReviewsRoute: AdminAdminReviewsRoute,
   AdminAdminWorkOrdersRoute: AdminAdminWorkOrdersRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
