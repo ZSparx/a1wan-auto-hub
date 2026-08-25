@@ -123,7 +123,7 @@ function SignupPage() {
             </button>
           </form>
           <p className="mt-6 text-sm text-center text-muted-foreground">
-            Already have an account? <Link to="/login" className="text-primary hover:underline">Sign in</Link>
+            Already have an account? <Link to="/login" search={{ redirect: "/portal" }} className="text-primary hover:underline">Sign in</Link>
           </p>
         </div>
       </div>

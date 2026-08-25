@@ -173,7 +173,7 @@ export function Header() {
                 </button>
               </>
             ) : (
-              <Link to="/login" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/login" search={{ redirect: "/portal" }} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
                 Customer Sign In
               </Link>
             )}
