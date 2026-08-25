@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
+import { ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
-import { adminSeats, claimAdmin } from "@/lib/roles.functions";
+import { adminExists } from "@/lib/roles.functions";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -30,14 +31,12 @@ const schema = z.object({
 
 function SignupPage() {
   const navigate = useNavigate();
-  const [accountType, setAccountType] = useState<"customer" | "admin">("customer");
   const [form, setForm] = useState({ full_name: "", phone: "", email: "", password: "" });
-  const [adminCode, setAdminCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { data: seats } = useQuery({ queryKey: ["admin-seats"], queryFn: () => adminSeats() });
-  const seatsFull = seats ? seats.remaining <= 0 : false;
+  const { data: adminState } = useQuery({ queryKey: ["admin-exists"], queryFn: () => adminExists() });
+  const isOwnerClaim = adminState ? !adminState.exists : false;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/portal" }); });
@@ -47,7 +46,6 @@ function SignupPage() {
     e.preventDefault();
     const parsed = schema.safeParse(form);
     if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Invalid input"); return; }
-    if (accountType === "admin" && !adminCode.trim()) { toast.error("Enter the admin code"); return; }
     setLoading(true);
     const { data: signUpData, error } = await supabase.auth.signUp({
       email: parsed.data.email,
@@ -59,24 +57,16 @@ function SignupPage() {
     });
     if (error) { setLoading(false); toast.error(error.message); return; }
 
-    if (accountType === "admin") {
-      if (!signUpData.session) {
-        await supabase.auth.signInWithPassword({ email: parsed.data.email, password: parsed.data.password });
-      }
-      try {
-        await claimAdmin({ data: { code: adminCode } });
-        setLoading(false);
-        toast.success("Admin account created!");
-        navigate({ to: "/admin" });
-        return;
-      } catch (err) {
-        setLoading(false);
-        toast.error(err instanceof Error ? err.message : "Could not verify admin code");
-        return;
-      }
+    if (!signUpData.session) {
+      await supabase.auth.signInWithPassword({ email: parsed.data.email, password: parsed.data.password });
     }
-
     setLoading(false);
+
+    if (isOwnerClaim) {
+      toast.success("Owner account created — welcome to your dashboard!");
+      navigate({ to: "/admin" });
+      return;
+    }
     toast.success("Account created!");
     navigate({ to: "/customer-portal" });
   }
@@ -89,28 +79,16 @@ function SignupPage() {
           <h1 className="font-display uppercase text-3xl tracking-wide mb-1">Create Account</h1>
           <p className="text-sm text-muted-foreground mb-6">Track your repairs and pay invoices online.</p>
 
-          <div className="grid grid-cols-2 gap-2 mb-6 p-1 rounded-md bg-background border border-border">
-            {(["customer", "admin"] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                disabled={t === "admin" && seatsFull}
-                onClick={() => setAccountType(t)}
-                className={`py-2 rounded text-xs font-display uppercase tracking-wider transition disabled:opacity-40 ${
-                  accountType === t ? "bg-amber-gradient text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t === "customer" ? "Customer" : "Shop Admin"}
-              </button>
-            ))}
-          </div>
-          {accountType === "admin" && (
-            <p className="-mt-4 mb-4 text-xs text-muted-foreground">
-              {seats ? `${seats.remaining} of ${seats.limit} admin seats available.` : "Checking admin seats…"}
-            </p>
-          )}
-          {seatsFull && accountType === "customer" && (
-            <p className="-mt-4 mb-4 text-xs text-muted-foreground">Admin seats are full.</p>
+          {isOwnerClaim && (
+            <div className="mb-6 flex gap-3 rounded-md border border-primary/40 bg-primary/10 p-4">
+              <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
+              <p className="text-sm text-foreground">
+                <span className="font-display uppercase tracking-wider text-primary">Owner setup</span>
+                <br />
+                No shop admin exists yet. This first account becomes the shop administrator and can
+                create staff and customer accounts from the dashboard.
+              </p>
+            </div>
           )}
 
           <form onSubmit={onSubmit} className="space-y-4">
@@ -140,16 +118,8 @@ function SignupPage() {
               );
             })}
 
-            {accountType === "admin" && (
-              <div>
-                <label className="block text-xs font-display uppercase tracking-wider text-muted-foreground mb-2">Admin code</label>
-                <input type="password" required value={adminCode} onChange={(e) => setAdminCode(e.target.value)}
-                  className="w-full rounded-md bg-background border border-border px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30" />
-              </div>
-            )}
-
             <button disabled={loading} className="w-full bg-amber-gradient text-primary-foreground font-display uppercase tracking-wider font-semibold px-6 py-3.5 rounded-md shadow-glow-amber disabled:opacity-60">
-              {loading ? "Creating…" : accountType === "admin" ? "Create Admin Account" : "Create Account"}
+              {loading ? "Creating…" : isOwnerClaim ? "Create Owner Account" : "Create Account"}
             </button>
           </form>
           <p className="mt-6 text-sm text-center text-muted-foreground">
