@@ -31,6 +31,7 @@ const links: { to: string; label: string; icon: React.ElementType; exact?: boole
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/cars", label: "Cars", icon: Car },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
+  { to: "/admin/reviews", label: "Reviews", icon: Star },
 ];
 
 function AdminLayout() {
