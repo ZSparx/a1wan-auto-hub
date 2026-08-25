@@ -72,6 +72,7 @@ function Home() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/book"
+                search={{ service: "" }}
                 className="inline-flex items-center gap-2 bg-amber-gradient text-primary-foreground font-display uppercase tracking-wider font-semibold px-6 py-3.5 rounded-md shadow-glow-amber hover:brightness-110 transition"
               >
                 Book Service <ArrowRight className="h-4 w-4" />

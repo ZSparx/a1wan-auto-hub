@@ -107,6 +107,7 @@ export function Header() {
           ) : (
             <Link
               to="/login"
+              search={{ redirect: "/portal" }}
               className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               <User className="h-4 w-4" />
@@ -173,7 +174,7 @@ export function Header() {
                 </button>
               </>
             ) : (
-              <Link to="/login" onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/login" search={{ redirect: "/portal" }} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm text-muted-foreground hover:text-foreground">
                 Customer Sign In
               </Link>
             )}

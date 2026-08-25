@@ -28,31 +28,11 @@ export const adminSeats = createServerFn({ method: "GET" }).handler(async () => 
   return { used, limit: ADMIN_LIMIT, remaining: Math.max(0, ADMIN_LIMIT - used) };
 });
 
-/** Signed-in user redeems the shop's admin code to claim one of the 2 admin seats. */
-export const claimAdmin = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ code: z.string().min(1).max(200) }).parse(input))
-  .handler(async ({ data, context }) => {
-    const expected = process.env.ADMIN_SIGNUP_CODE;
-    if (!expected) throw new Error("Admin signup is not configured.");
-    if (data.code.trim() !== expected.trim()) throw new Error("Invalid admin code.");
-
-    const db = adminClient();
-    if ((await countAdmins(db)) >= ADMIN_LIMIT) {
-      throw new Error("Both admin seats are already taken.");
-    }
-
-    const { data: existing } = await db
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", context.userId);
-    if (existing?.some((r) => r.role === "admin")) return { success: true };
-
-    await db.from("user_roles").delete().eq("user_id", context.userId);
-    const { error } = await db.from("user_roles").insert({ user_id: context.userId, role: "admin" });
-    if (error) throw new Error(error.message);
-    return { success: true };
-  });
+/** Public: has the shop admin been claimed yet? */
+export const adminExists = createServerFn({ method: "GET" }).handler(async () => {
+  const db = adminClient();
+  return { exists: (await countAdmins(db)) > 0 };
+});
 
 const createSchema = z.object({
   email: z.string().trim().email().max(200),
@@ -115,4 +95,59 @@ export const listMechanics = createServerFn({ method: "GET" })
       .select("id, full_name, email")
       .in("id", ids);
     return profiles ?? [];
+  });
+
+/** Admin-only: list every account with its role. */
+export const listAccounts = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Forbidden");
+    const db = adminClient();
+    const { data: profiles } = await db
+      .from("profiles")
+      .select("id, full_name, email, phone, created_at")
+      .order("created_at", { ascending: true });
+    const { data: roles } = await db.from("user_roles").select("user_id, role");
+    const roleMap = new Map((roles ?? []).map((r) => [r.user_id, r.role]));
+    return (profiles ?? []).map((p) => ({
+      ...p,
+      role: (roleMap.get(p.id) ?? "customer") as "admin" | "mechanic" | "customer",
+      isSelf: p.id === context.userId,
+    }));
+  });
+
+/** Admin-only: change a user's role (admin seats capped at 2). */
+export const setUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ user_id: z.string().uuid(), role: z.enum(["admin", "mechanic", "customer"]) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Forbidden");
+
+    const db = adminClient();
+    const { data: current } = await db.from("user_roles").select("role").eq("user_id", data.user_id);
+    const currentRole = current?.[0]?.role;
+    if (currentRole === data.role) return { success: true };
+
+    if (data.role === "admin" && (await countAdmins(db)) >= ADMIN_LIMIT) {
+      throw new Error(`Only ${ADMIN_LIMIT} admin accounts are allowed.`);
+    }
+    if (currentRole === "admin" && data.role !== "admin") {
+      if (data.user_id === context.userId) throw new Error("You cannot remove your own admin access.");
+      if ((await countAdmins(db)) <= 1) throw new Error("The shop must keep at least one admin.");
+    }
+
+    await db.from("user_roles").delete().eq("user_id", data.user_id);
+    const { error } = await db.from("user_roles").insert({ user_id: data.user_id, role: data.role });
+    if (error) throw new Error(error.message);
+    return { success: true };
   });
